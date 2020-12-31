@@ -1,0 +1,27 @@
+{
+  "name": "google_meet-autorec",
+  "version": "0.0.1",
+  "description": "A Google Chrome extension to add automatic video recording for Google Meet",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ychubachi/google_meet-autorec.git"
+  },
+  "keywords": [
+    "google",
+    "chrome",
+    "google",
+    "meet",
+    "automatic",
+    "recording"
+  ],
+  "author": "Yoshihide CHUBACHI",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ychubachi/google_meet-autorec/issues"
+  },
+  "homepage": "https://github.com/ychubachi/google_meet-autorec#readme"
+}
