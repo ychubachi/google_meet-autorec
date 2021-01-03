@@ -44,12 +44,13 @@ $(function () {
 </span>
       */
       // var record = $('[jscontroller="dBndrc"]'); // record
-      var record = $('[jscontroller="pc452"]'); // full screen
+      var menuItem = $('[jscontroller="pc452"]'); // full screen
 
-      console.log(record);
-      if (record.length > 0) {
-        console.log("record button found");
-        record.click();
+      console.log(menuItem);
+      if (menuItem.length > 0) {
+        console.log("menu item found");
+
+        menuItem.click();
         clearInterval(id);
       }
       timeout++;
