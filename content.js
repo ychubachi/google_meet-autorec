@@ -43,9 +43,9 @@ $(function () {
   </div>
 </span>
       */
-      // body > div.JPdR6b.e5Emjc.CIYi0d.jvUMfb.yOCuXd.qjTEB > div > div > span.z80M1.NticYc.I3Yihd > div.uyYuVb.oJeWuf > div > div
-      var record = $("span.z80M1.NticYc.I3Yihd");
-      // var record = $("span.z80M1.NticYc.I3Yihd > div.uyYuVb.oJeWuf");
+      // var record = $('[jscontroller="dBndrc"]'); // record
+      var record = $('[jscontroller="pc452"]'); // full screen
+
       console.log(record);
       if (record.length > 0) {
         console.log("record button found");
@@ -61,49 +61,3 @@ $(function () {
     sendResponse("OK");
   });
 });
-
-
-$.ajax({
-  type: "POST",
-  url: "some.php",
-  data: "name=John&location=Boston",
-  success: function (msg) {
-    alert("Data Saved: " + msg);
-  }
-});
-
-
-
-
-
-
-
-_.q();
-
-var Phe = function (a) { switch (a) { case 1: case 3: return [1, 3]; case 2: case 4: return [2, 4]; default: return [] } }, Rhe = function (a, b) { _.yf && !Qhe(a) ? _.Th(b, 1E3) : b() }, She = { Op: 1700, prefix: "//www.gstatic.com/meet/sounds/recording_error_", Sx: "ceefce62ca733f47769769dd092a51f3.mp3" }, The = { Op: 2E3, prefix: "//www.gstatic.com/meet/sounds/recording_start_", Sx: "1c84d5cd789e5473b43a0b686b5af788.mp3" }, Uhe = { Op: 2E3, prefix: "//www.gstatic.com/meet/sounds/recording_stop_", Sx: "f8884f5dfa1e16ec6a927a81d0bc3b49.mp3" }; _.l("GZl2nc");
-
-var Vhe = function (a) { _.W.call(this, a.Pa); this.Ia = new Map; this.Da = new Map; this.Ba = null; this.Ca = a.$a.Bd.Qm(); this.Zb = a.model.call; this.Oa = a.model.Yn; this.La = a.Ga.ud; this.Aa = a.Ga.notify }; _.u(Vhe, _.W); Vhe.Ma = function () { return { $a: { Bd: _.Ik }, model: { call: _.vl, Yn: _.aW }, Ga: { ud: _.Qu, notify: _.jR } } };
-Vhe.prototype.mLb = function (a) {
-  a = a.data; var b = a.status, c = a.Tx, d = a.reason, e = a.uf; if (a.Ak && _.YV().has(e)) { if (null !== this.Ba && this.Ba !== e) switch (e) { case 2: this.Aa.show("broadcastSettingUpdateToPrivate", 2E3); break; case 4: this.Aa.show("broadcastSettingUpdateToPublic", 2E3) }this.Ba = e } if (b !== c || d) switch (b) {
-    case 1: Whe(this, a); break; case 2: case 4: case 3: case 5: Xhe(this, a); break; case 6: a = a.uf; Yhe(this, a, 1) || (Zhe(this, a, 1), this.Ca.play(The), a = _.hY(a), this.La.Aa(a.Tr.Zu)); break; case 7: $he(this, a); break; case 8: break;
-    default: _.Hu(b, "status had an unknown type")
-  }
-}; Vhe.prototype.oLb = function (a) { (a = aie.get(a.data)) && this.Aa.show(a) };
-var Xhe = function (a, b) { var c = b.uf; b = b.f5; if (!Yhe(a, c, 0)) { Zhe(a, c, 0); var d = _.hY(c); Qhe(b) ? a.Aa.show(d.Tr.kBa, void 0, [null === b || void 0 === b ? void 0 : b.name]) : Rhe(b, function () { a.Aa.show(d.Tr.jBa) }) } }, $he = function (a, b) { b = b.uf; var c = _.hY(b); bie(a, b); var d = _.gb(2E3).then(function () { return a.Aa.show(c.Tr.iCa) }); a.Da.set(b, d) }, Whe = function (a, b) {
-  var c = b.uf, d = b.reason, e = b.f5, f = b.Wx; Yhe(a, c, 2) || cie(a, c) || (Zhe(a, c, 2), bie(a, c), die(a).then(function (g) {
-    var k = eie(b, g), m = [e && e.name || "", f || ""]; d && 7 !== d ? (Rhe(e, function () {
-      a.Aa.og(k,
-        void 0, m)
-    }), a.Ca.play(She)) : (Rhe(e, function () { a.Aa.show(k, 4E3, m) }), a.Ca.play(Uhe))
-  }))
-}, Yhe = function (a, b, c) { b = _.Sb(Phe(b)); for (var d = b.next(); !d.done; d = b.next())if (a.Ia.get(d.value) === c) return !0; return !1 }, Zhe = function (a, b, c) { b = _.Sb(Phe(b)); for (var d = b.next(); !d.done; d = b.next())a.Ia.set(d.value, c) }, cie = function (a, b) { b = _.Sb(Phe(b)); for (var c = b.next(); !c.done; c = b.next())if (1 !== a.Oa.Kc(c.value)) return !0; return !1 }, bie = function (a, b) { var c = a.Da.get(b); c && (c.cancel(), a.Da.delete(b)) }, die = function (a) {
-  return _.ib([a.Zb.Da.promise,
-  _.gb(250)]).then(function (b) { return !!b }, function () { return !1 })
-}, eie = function (a, b) { var c = a.reason, d = Qhe(a.f5); a = _.hY(a.uf).Tr; switch (c) { case 2: return a.fCa; case 6: return a.aCa; case 4: return a.eCa; case 3: return d ? a.$Ba : a.ZBa; case 7: return a.YBa; case 5: return a.XBa; case 1: return a.dCa; default: return d ? b ? a.gCa : a.hCa : b ? a.bCa : a.cCa } }; _.X(Vhe.prototype, "CgG2U", function () { return this.oLb }); _.X(Vhe.prototype, "CuNoEd", function () { return this.mLb });
-var Qhe = function (a) { return !!a && !a.Ne && !!a.name }, aie = new Map([[1, "recordingAboutToStop"]]); _.Y(_.gwa, Vhe);
-
-_.q();
-
-}catch (e) { _._DumpException(e) }
-}).call(this, this.default_MeetingsUi);
-// Google Inc.
