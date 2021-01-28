@@ -6,13 +6,16 @@
     "permissions": [
         "declarativeContent",
         "storage",
-        "tabs"
+        "tabs",
+        "webRequest",
+        "webRequestBlocking",
+        "https://meet.google.com/*"
     ],
     "background": {
         "scripts": [
             "background.js"
         ],
-        "persistent": false
+        "persistent": true
     },
     "page_action": {
         "default_popup": "popup.html"
@@ -22,7 +25,7 @@
             "matches": [
                 "<all_urls>"
             ],
-            "run_at": "document_idle",
+            "run_at": "document_start",
             "js": [
                 "jquery-3.5.1.min.js",
                 "content.js"
