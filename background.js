@@ -179,3 +179,18 @@ function send_update_to_inject(command) {
  *   Fired when a registered command is activated using a keyboard shortcut.
  */
 chrome.commands.onCommand.addListener(send_update_to_inject);
+
+
+chrome.webRequest.onBeforeRequest.addListener(
+  function (info) {
+    console.log("background.js: MeetingRecordingService is requested");
+    body = info.requestBody.raw[0].bytes;
+    console.log(body);
+  },
+  {
+    urls: [
+      "https://meet.google.com/$rpc/google.rtc.meetings.v1.MeetingRecordingService/CreateMeetingRecording"
+    ]
+  },
+  ["requestBody", "extraHeaders"]
+);

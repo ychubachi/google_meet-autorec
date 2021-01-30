@@ -158,6 +158,7 @@ function start_recording(request, sendResponse) {
     console.log("** An error occurred during the transaction");
     console.log(this);
   };
+
   /*
   mrequest.onload = function (e) {
     console.log('sending response: ' + this.responseText);
@@ -196,7 +197,51 @@ function start_recording(request, sendResponse) {
     }
   };
   */
-  var mbody_str = '\n\u0013spaces/' + request.space_id + '\u0012\u0002\n\u0000\u001a\u0002\n\u0000';
-  var mbody = strToArrayBuffer(mbody_str);
-  mrequest.send(mbody);
+  // spaces/C9gZmAU5xVwBh
+  /*
+ 0: 10  LF
+ 1: 19  DC3
+
+ 2: 115 s
+ 3: 112 p
+ 4: 97  a
+ 5: 99  c
+ 6: 101 e
+ 7: 115 s
+ 8: 47  /
+
+ 9: 50  2UJQ1T4tt_sB
+10: 85
+11: 74
+12: 81
+13: 49
+14: 84
+15: 52
+16: 116
+17: 116
+18: 95
+19: 115
+20: 66  B
+
+21: 18
+22: 2
+23: 104
+24: 1
+   */
+  var mystr = "spaces/" + request.space_id;
+  console.log(mystr);
+  console.log(mystr.length);
+  var bytes = new Uint8Array(25);
+  bytes[0] = 10;
+  bytes[1] = 19;
+  for (var i = 2; i <= 20; i++) {
+    bytes[i] = mystr.charCodeAt(i - 2);
+  }
+  bytes[21] = 18;
+  bytes[22] = 2;
+  bytes[23] = 104;
+  bytes[24] = 1;
+  console.log(bytes);
+
+  mrequest.send(bytes);
 }
