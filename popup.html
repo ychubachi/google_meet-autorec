@@ -2,35 +2,17 @@
 <html>
 
 <head>
-  <meta charset="UTF-8">
-  <style>
-    body {
-      width: 250px;
-    }
+  <link rel="stylesheet" href="popup.css">
 
-    .wrapper {
-      display: flex;
-      flex-direction: column;
-    }
-  </style>
-</head>
-
-<body>
-  <div class="wrapper">
-    <div>Google Meet AutoRec</div>
-    <div id="url">いいい</div>
-    <div>
-      <input id="checkbox" type="checkbox">
-      remember this url
-      </input>
-    </div>
-    <div>
-      <button id="okButton">sorry... full screen...</button>
-    </div>
-    <p id="url">あああ</p>
-  </div>
-  <script src='jquery-3.5.1.min.js'></script>
-  <script src="popup.js"></script>
+<body style="width: 225px">
+  <button class="w3-button w3-red w3-round-xxlarge w3-xlarge" id="muteall">Mute Everyone</button>
+  <br>
+  <br>
+  <button class="w3-button w3-red w3-round-xxlarge w3-xlarge" id="kickall">Kick Everyone</button>
+  <br>
+  <br>
+  <button class="w3-button w3-red w3-round-xxlarge w3-xlarge" id="start_recording">Start Recording</button>
+  <script type="text/javascript" src="popup.js"></script>
 </body>
 
 </html>

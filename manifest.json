@@ -1,41 +1,53 @@
 {
+    "manifest_version": 2,
     "name": "Google Meet AutoRec",
     "description": "A Google Chrome extension to add automatic video recording for Google Meet",
     "version": "0.0.0.1",
-    "manifest_version": 2,
     "permissions": [
-        "declarativeContent",
-        "storage",
         "tabs",
         "webRequest",
         "webRequestBlocking",
         "https://meet.google.com/*"
     ],
-    "background": {
-        "scripts": [
-            "background.js"
-        ],
-        "persistent": true
-    },
-    "page_action": {
-        "default_popup": "popup.html"
-    },
     "content_scripts": [
         {
             "matches": [
-                "<all_urls>"
+                "https://meet.google.com/*"
             ],
-            "run_at": "document_start",
             "js": [
                 "jquery-3.5.1.min.js",
                 "content.js"
-            ]
+            ],
+            "run_at": "document_start"
         }
     ],
+    "background": {
+        "scripts": [
+            "background.js"
+        ]
+    },
+    "browser_action": {
+        "default_popup": "popup.html",
+        "default_title": "Google Meet AutoRec"
+    },
     "icons": {
         "16": "images/get_started16.png",
         "32": "images/get_started32.png",
         "48": "images/get_started48.png",
         "128": "images/get_started128.png"
+    },
+    "commands": {
+        "muteAll": {
+            "suggested_key": {
+                "default": "Alt+Shift+M"
+            },
+            "description": "Mute all Google Meet participants"
+        },
+        "kickAll": {
+            "suggested_key": {
+                "default": "Alt+Shift+K"
+            },
+            "description": "Kick all Google Meet participants"
+        }
     }
 }
