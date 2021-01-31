@@ -158,7 +158,7 @@ function create_meeting_recording(request) {
     var response_str = window.atob(this.responseText)
     console.log(response_str);
     var recording_id = response_str.match("Cspaces/.*/recordings/[a-f,0-9,-]*")[0];
-    console.log(recording_id)
+    console.log(recording_id);
 
     /*
     for (i = 0; i < update_devices.length; i++) {
