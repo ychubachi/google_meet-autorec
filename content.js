@@ -137,9 +137,15 @@ function update_all(action, request, sendResponse) {
   mrequest.send(mbody);
 }
 
+// Send CreateMeetingRecording
 function start_recording(request, sendResponse) {
   console.log("content.js: start_recording() called");
+  create_meeting_recording(request);
+}
+
+function create_meeting_recording(request) {
   var mrequest = new XMLHttpRequest();
+
   mrequest.withCredentials = true;
   mrequest.open(
     "POST",
@@ -147,37 +153,14 @@ function start_recording(request, sendResponse) {
     true
   );
 
-  // Remove unnecessary headers
-  for (i = 0; i < request.send_headers.length; i++) {
-    if (!skip_headers.includes(request.send_headers[i].name)) {
-      mrequest.setRequestHeader(request.send_headers[i].name, request.send_headers[i].value);
-    }
-  }
-
-  mrequest.onerror = function () {
-    console.log("** An error occurred during the transaction");
-    console.log(this);
-  };
-
-  /*
   mrequest.onload = function (e) {
-    console.log('sending response: ' + this.responseText);
-    all_devices_response = atob(this.responseText);
-    all_devices = Array.from(all_devices_response.matchAll(device_id_re), m => m[1]);
-    console.log('all devices:');
-    console.log(all_devices);
-    console.log(request);
-    update_devices = [];
-    for (i = 0; i < all_devices.length; i++) {
-      if (!request.ignore_device_ids.includes(all_devices[i])) {
-        update_devices.push(all_devices[i]);
-      }
-    }
-    updater_id = [...all_devices_response.matchAll(updater_id_re)].pop()[1]
-    console.log('updater_id: "' + updater_id + '"');
-    console.log('update_devices');
-    console.log(update_devices);
-    console.log('update action: ' + action)
+    console.log('start recording response in base64: ' + this.responseText);
+    var response_str = window.atob(this.responseText)
+    console.log(response_str);
+    var recording_id = response_str.match("Cspaces/.*/recordings/[a-f,0-9,-]*")[0];
+    console.log(recording_id)
+
+    /*
     for (i = 0; i < update_devices.length; i++) {
       var srequest = new XMLHttpRequest();
       srequest.withCredentials = true;
@@ -195,39 +178,30 @@ function start_recording(request, sendResponse) {
       var body = strToArrayBuffer(sbody);
       srequest.send(body);
     }
+    */
   };
-  */
-  // spaces/C9gZmAU5xVwBh
+
+  mrequest.onerror = function () {
+    console.log("** An error occurred during the transaction");
+    console.log(this);
+  };
+
+  // Make headers except unnecessary ones
+  for (i = 0; i < request.send_headers.length; i++) {
+    if (!skip_headers.includes(request.send_headers[i].name)) {
+      mrequest.setRequestHeader(request.send_headers[i].name, request.send_headers[i].value);
+    }
+  }
+
+  // Make payloads
   /*
- 0: 10  LF
- 1: 19  DC3
-
- 2: 115 s
- 3: 112 p
- 4: 97  a
- 5: 99  c
- 6: 101 e
- 7: 115 s
- 8: 47  /
-
- 9: 50  2UJQ1T4tt_sB
-10: 85
-11: 74
-12: 81
-13: 49
-14: 84
-15: 52
-16: 116
-17: 116
-18: 95
-19: 115
-20: 66  B
-
-21: 18
-22: 2
-23: 104
-24: 1
-   */
+  payload string is like "spaces/C9gZmAU5xVwBh"
+  bynary:
+    0: 10 1: 19
+    2-8:  spaces/
+    9-20: 2UJQ1T4tt_sB
+    21: 18 22: 2 23: 104 24: 1
+    */
   var mystr = "spaces/" + request.space_id;
   console.log(mystr);
   console.log(mystr.length);

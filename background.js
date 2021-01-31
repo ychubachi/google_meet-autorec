@@ -183,14 +183,24 @@ chrome.commands.onCommand.addListener(send_update_to_inject);
 
 chrome.webRequest.onBeforeRequest.addListener(
   function (info) {
-    console.log("background.js: MeetingRecordingService is requested");
-    body = info.requestBody.raw[0].bytes;
-    console.log(body);
+    console.log("background.js: chrome.webRequest.onBeforeRequest listener is called");
+    console.log(info);
+
+    var method = info.url.match("([^/]+?)?$")[1];
+    console.log("background.js: MeetingRecordingService/" + method + " is requested");
+
+    var body = info.requestBody.raw[0].bytes;
+    // console.log(body);
+    console.log(ab2str(body));
   },
   {
     urls: [
-      "https://meet.google.com/$rpc/google.rtc.meetings.v1.MeetingRecordingService/CreateMeetingRecording"
+      "https://meet.google.com/$rpc/google.rtc.meetings.v1.MeetingRecordingService/*"
     ]
   },
   ["requestBody", "extraHeaders"]
 );
+
+function ab2str(buf) {
+  return String.fromCharCode.apply(null, new Uint8Array(buf));
+}
