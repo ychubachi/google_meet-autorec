@@ -1,5 +1,6 @@
 console.log("popup.js");
 
+/*
 function mute_all() {
   chrome.runtime.sendMessage({ command: "muteAll" }, function (response) {
     console.log(response);
@@ -11,6 +12,7 @@ function kick_all() {
     console.log(response);
   });
 }
+*/
 
 function start_recording() {
   console.log("start_recerding() called");
@@ -25,8 +27,11 @@ function start_recording() {
   );
 }
 
+/*
 document.getElementById('muteall').addEventListener('click', mute_all);
 document.getElementById('kickall').addEventListener('click', kick_all);
+*/
+
 document.getElementById('start_recording').addEventListener('click', start_recording);
 
 /*

@@ -190,7 +190,7 @@ chrome.webRequest.onBeforeRequest.addListener(
     console.log("background.js: MeetingRecordingService/" + method + " is requested");
 
     var body = info.requestBody.raw[0].bytes;
-    // console.log(body);
+    console.log(body);
     console.log(ab2str(body));
   },
   {

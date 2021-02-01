@@ -144,6 +144,7 @@ function start_recording(request, sendResponse) {
 }
 
 function create_meeting_recording(request) {
+  console.log("create_meeting_recording called");
   var mrequest = new XMLHttpRequest();
 
   mrequest.withCredentials = true;
@@ -159,6 +160,8 @@ function create_meeting_recording(request) {
     console.log(response_str);
     var recording_id = response_str.match("Cspaces/.*/recordings/[a-f,0-9,-]*")[0];
     console.log(recording_id);
+    list_meeting_recording_acks(request, recording_id);
+
 
     /*
     for (i = 0; i < update_devices.length; i++) {
@@ -193,29 +196,140 @@ function create_meeting_recording(request) {
     }
   }
 
-  // Make payloads
-  /*
-  payload string is like "spaces/C9gZmAU5xVwBh"
-  bynary:
-    0: 10 1: 19
-    2-8:  spaces/
-    9-20: 2UJQ1T4tt_sB
-    21: 18 22: 2 23: 104 24: 1
-    */
-  var mystr = "spaces/" + request.space_id;
-  console.log(mystr);
-  console.log(mystr.length);
+  var payload = create_meeting_recording_payload("spaces/" + request.space_id);
+  console.log("sending: " + payload);
+  mrequest.send(payload);
+}
+
+// Make create_meeting_recording payloads
+/*
+payload string is like "spaces/C9gZmAU5xVwBh"
+bynary:
+  0: 10 1: 19
+  2 to  8:  spaces/
+  9 to 20: 2UJQ1T4tt_sB
+  21: 18 22: 2 23: 104 24: 1
+*/
+function create_meeting_recording_payload(str) {
   var bytes = new Uint8Array(25);
   bytes[0] = 10;
   bytes[1] = 19;
   for (var i = 2; i <= 20; i++) {
-    bytes[i] = mystr.charCodeAt(i - 2);
+    bytes[i] = str.charCodeAt(i - 2);
   }
   bytes[21] = 18;
   bytes[22] = 2;
   bytes[23] = 104;
   bytes[24] = 1;
-  console.log(bytes);
+  return bytes;
+}
 
-  mrequest.send(bytes);
+function list_meeting_recording_acks(request, recording_id) {
+  console.log("list_meeting_recording_acks called");
+  var mrequest = new XMLHttpRequest();
+
+  mrequest.withCredentials = true;
+  mrequest.open(
+    "POST",
+    'https://meet.google.com/$rpc/google.rtc.meetings.v1.MeetingRecordingService/ListMeetingRecordingAcks',
+    true
+  );
+
+  mrequest.onload = function (e) {
+    console.log('list_meeting_recording_acks response in base64: ');
+    console.log(this.responseText);
+    var response_str = window.atob(this.responseText)
+    console.log(response_str);
+
+    update_meeting_recording(request, recording_id);
+  };
+
+  mrequest.onerror = function () {
+    console.log("** An error occurred during the transaction");
+    console.log(this);
+  };
+
+  // Make headers except unnecessary ones
+  for (i = 0; i < request.send_headers.length; i++) {
+    if (!skip_headers.includes(request.send_headers[i].name)) {
+      mrequest.setRequestHeader(request.send_headers[i].name, request.send_headers[i].value);
+    }
+  }
+
+  var payload = list_meeting_recording_acks_payload(recording_id)
+  console.log("sending: " + payload);
+  mrequest.send(payload);
+}
+
+/*
+0: 10
+1-68: Cspaces/CAgJXUk_4r8B/recordings/f6550ece-df38-4898-b866-6eb9bb1b36fd
+*/
+function list_meeting_recording_acks_payload(str) {
+  var bytes = new Uint8Array(69);
+  bytes[0] = 10;
+  for (var i = 1; i <= 68; i++) {
+    bytes[i] = str.charCodeAt(i - 1);
+  }
+  return bytes;
+}
+
+function update_meeting_recording(request, recording_id) {
+  console.log("update_meeting_recording called");
+  var mrequest = new XMLHttpRequest();
+
+  mrequest.withCredentials = true;
+  mrequest.open(
+    "POST",
+    'https://meet.google.com/$rpc/google.rtc.meetings.v1.MeetingRecordingService/UpdateMeetingRecording',
+    true
+  );
+
+  mrequest.onload = function (e) {
+    console.log('update_meeting_recording response in base64: ');
+    console.log(this.responseText);
+    var response_str = window.atob(this.responseText)
+    console.log(response_str);
+  };
+
+  mrequest.onerror = function () {
+    console.log("** An error occurred during the transaction");
+    console.log(this);
+  };
+
+  // Make headers except unnecessary ones
+  for (i = 0; i < request.send_headers.length; i++) {
+    if (!skip_headers.includes(request.send_headers[i].name)) {
+      mrequest.setRequestHeader(request.send_headers[i].name, request.send_headers[i].value);
+    }
+  }
+
+  var payload = update_meeting_recording_payload(recording_id);
+  console.log("sending: " + payload);
+  mrequest.send(payload);
+}
+
+/*
+0: 10
+1: 73
+2: 10
+3-70: Cspaces/PfIBBWFYOJoB/recordings/026fc4a9-8d71-4791-8946-bbf404a7d9e1
+71: 40
+72: 3
+73: 104
+74: 1
+*/
+function update_meeting_recording_payload(str) {
+  var bytes = new Uint8Array(75);
+  bytes[0] = 10;
+  bytes[1] = 73;
+  bytes[2] = 10;
+  for (var i = 3; i <= 70; i++) {
+    bytes[i] = str.charCodeAt(i - 3);
+  }
+  bytes[71] = 40;
+  bytes[72] = 3; // if stop, use 4
+  bytes[73] = 104;
+  bytes[74] = 1;
+  return bytes;
 }
