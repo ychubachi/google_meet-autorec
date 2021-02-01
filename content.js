@@ -241,7 +241,7 @@ function list_meeting_recording_acks(request, recording_id) {
     var response_str = window.atob(this.responseText)
     console.log(response_str);
 
-    update_meeting_recording(request, recording_id);
+    update_meeting_recording(request, recording_id, "start");
   };
 
   mrequest.onerror = function () {
@@ -274,7 +274,7 @@ function list_meeting_recording_acks_payload(str) {
   return bytes;
 }
 
-function update_meeting_recording(request, recording_id) {
+function update_meeting_recording(request, recording_id, command) {
   console.log("update_meeting_recording called");
   var mrequest = new XMLHttpRequest();
 
@@ -304,7 +304,7 @@ function update_meeting_recording(request, recording_id) {
     }
   }
 
-  var payload = update_meeting_recording_payload(recording_id);
+  var payload = update_meeting_recording_payload(recording_id, command);
   console.log("sending: " + payload);
   mrequest.send(payload);
 }
@@ -319,7 +319,7 @@ function update_meeting_recording(request, recording_id) {
 73: 104
 74: 1
 */
-function update_meeting_recording_payload(str) {
+function update_meeting_recording_payload(str, command) {
   var bytes = new Uint8Array(75);
   bytes[0] = 10;
   bytes[1] = 73;
@@ -328,7 +328,11 @@ function update_meeting_recording_payload(str) {
     bytes[i] = str.charCodeAt(i - 3);
   }
   bytes[71] = 40;
-  bytes[72] = 3; // if stop, use 4
+  if (command == "start") {
+    bytes[72] = 3;
+  } else { // if command is stop, use 4
+    bytes[72] = 4;
+  }
   bytes[73] = 104;
   bytes[74] = 1;
   return bytes;
