@@ -1,7 +1,7 @@
 console.log("popup.js");
 
 function start_recording() {
-  console.log("start_recerding() called");
+  console.trace();
   chrome.runtime.sendMessage(
     {
       command: "start_recording"
