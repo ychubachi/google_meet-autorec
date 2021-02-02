@@ -123,24 +123,27 @@ chrome.webRequest.onSendHeaders.addListener(
   ["requestHeaders", "extraHeaders"]
 );
 
-function process_chrome_message(request, sender, sendResponse) {
-  console.log("background.js: process_chrome_message() called.")
-  console.log('background got message with request: ' + request.command)
-  send_update_to_inject(request.command);
-  sendResponse('done');
-  return true;
-}
+chrome.runtime.onMessage.addListener(
+  function (request, sender, sendResponse) {
+    console.trace();
+    console.trace(request);
 
-/**
-chrome.runtime.onMessage.addListener(listener: function)
-  Fired when a message is sent from either an extension process (by sendMessage) or
-  a content script (by tabs.sendMessage).
-  https://developer.chrome.com/docs/extensions/reference/runtime/#event-onMessage
-*/
-chrome.runtime.onMessage.addListener(process_chrome_message);
+    send_update_to_inject(request.command);
+
+    sendResponse('done');
+    return true;
+  }
+);
+
+chrome.commands.onCommand.addListener(
+  function (command) {
+    send_update_to_inject(command);
+  }
+);
 
 function send_update_to_inject(command) {
-  console.log("background.js: send_update_to_inject() called.")
+  console.trace();
+
   chrome.tabs.query(
     {
       active: true, currentWindow: true
@@ -168,13 +171,6 @@ function send_update_to_inject(command) {
     }
   );
 }
-
-/**
- * chrome.commands.onCommand.addListener(listener: function)
- *   Fired when a registered command is activated using a keyboard shortcut.
- */
-chrome.commands.onCommand.addListener(send_update_to_inject);
-
 
 chrome.webRequest.onBeforeRequest.addListener(
   function (info) {

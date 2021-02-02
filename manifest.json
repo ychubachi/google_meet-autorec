@@ -37,17 +37,17 @@
         "128": "images/get_started128.png"
     },
     "commands": {
-        "muteAll": {
+        "start_recording": {
             "suggested_key": {
-                "default": "Alt+Shift+M"
+                "default": "Alt+Shift+R"
             },
-            "description": "Mute all Google Meet participants"
+            "description": "Start recording"
         },
-        "kickAll": {
+        "stop_recording": {
             "suggested_key": {
-                "default": "Alt+Shift+K"
+                "default": "Alt+Shift+S"
             },
-            "description": "Kick all Google Meet participants"
+            "description": "Stop recording"
         }
     }
 }
