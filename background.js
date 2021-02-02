@@ -1,29 +1,10 @@
 console.log("background.js loaded");
 
-var device_id_re = /@spaces\/.*\/devices\/([a-f,0-9,-]*)/;
-var space_id_re = /@spaces\/(.*?)\/devices\//;
-
-var space_id;
-var ignore_device_ids = [];
-var create_device_body;
-var send_headers;
-var send_headers2;
-
-function arrayBufferToBase64(buffer) {
-  var binary = '';
-  var bytes = new Uint8Array(buffer);
-  var len = bytes.byteLength;
-  for (var i = 0; i < len; i++) {
-    binary += String.fromCharCode(bytes[i]);
-  }
-  return window.btoa(binary);
-}
-
 /*
   watch CreatMeetingDevice and record our device ID(s)
-  1. In onBeforeRequest: get magic strings from the request body which includes device id and so on.
-  2. In onSendHeaders: get device and space ids.
+  Step 1. In onBeforeRequest: get magic strings from the request body which includes device id and so on.
 */
+var create_device_body;
 
 chrome.webRequest.onBeforeRequest.addListener(
   function (info) {
@@ -45,66 +26,25 @@ chrome.webRequest.onBeforeRequest.addListener(
   },
   ["requestBody", "extraHeaders"]);
 
-function objectEquals(a, b) {
+/*
+  watch CreatMeetingDevice and record our device ID(s)
+  Step 2. In onSendHeaders: get device and space ids by re-requesting CreateMeetingDevice request.
+*/
+var device_id_re = /@spaces\/.*\/devices\/([a-f,0-9,-]*)/;
+var space_id_re = /@spaces\/(.*?)\/devices\//;
 
-  if (a === b) {
-    // 同一インスタンスならtrueを返す
-    return true;
-  }
+var ignore_device_ids = [];
+var space_id;
 
-  // 比較対象双方のキー配列を取得する（順番保証のためソートをかける）
-  const aKeys = Object.keys(a).sort();
-  const bKeys = Object.keys(b).sort();
-
-  // 比較対象同士のキー配列を比較する
-  if (aKeys.toString() !== bKeys.toString()) {
-    console.log("aKeys=" + aKeys.toString());
-    console.log("bKeys=" + bKeys.toString());
-    // キーが違う場合はfalse
-    return false;
-  }
-
-  // 値をすべて調べる。
-  const wrongIndex = aKeys.findIndex(function (value) {
-    // 注意！これは等価演算子で正常に比較できるもののみを対象としています。
-    // つまり、ネストされたObjectやArrayなどには対応していないことに注意してください。
-    console.log("value=" + value);
-    if (a[value] !== b[value]) {
-      console.log("a[value]=" + a[value].toString());
-      console.log("b[value]=" + b[value].toString());
-    }
-    return a[value] !== b[value];
-  });
-
-  // 合致しないvalueがなければ、trueを返す。
-  return wrongIndex === -1;
-}
-
-// 
 chrome.webRequest.onSendHeaders.addListener(
   function (info) {
     console.trace();
     console.log(info.url);
     console.log(info);
 
-    // Capture request headers
-    send_headers2 = info.requestHeaders;
-
-    console.log("Captuered Request headers in CreatingMeetingDevice (trial):");
-    console.log(send_headers2);
-
     console.log("Sending message to content.js");
 
-    if (info.initiator != 'https://meet.google.com') {
-      console.log('Ignoring CreatingMeetingDevice call from ' + info.initiator);
-      return { cancel: false };
-    }
     chrome.tabs.query(
-      /*
-      chrome.tabs.query(queryInfo: object, callback: function)
-        Gets all tabs that have the specified properties, or all tabs if no properties are specified.
-        https://developer.chrome.com/docs/extensions/reference/tabs/#method-query
-      */
       {
         active: true, currentWindow: true
       },
@@ -113,14 +53,6 @@ chrome.webRequest.onSendHeaders.addListener(
 
         // send a message to content.js
         chrome.tabs.sendMessage(
-          /*
-          chrome.tabs.sendMessage(tabId: number, message: any, options: object, responseCallback: function)
-            Sends a single message to the content script(s) in the specified tab,
-            with an optional callback to run when a response is sent back.
-            The runtime.onMessage event is fired in each content script running in the specified tab
-            for the current extension.
-            https://developer.chrome.com/docs/extensions/reference/tabs/#method-sendMessage
-          */
           tabs[0].id,
           {
             command: 'createDevice', url: info.url, reqbody: reqbody, headers: info.requestHeaders
@@ -156,13 +88,14 @@ chrome.webRequest.onSendHeaders.addListener(
   {
     urls: [
       "https://meet.google.com/$rpc/google.rtc.meetings.v1.MeetingDeviceService/CreateMeetingDevice"
-    ],
-    types: ["xmlhttprequest"]
+    ]
   },
   ["requestHeaders", "extraHeaders"]
 );
 
 // watch SyncMeetingSpaceCollections and capture request headers
+var send_headers;
+
 chrome.webRequest.onSendHeaders.addListener(
   function (info) {
     console.trace();
@@ -171,17 +104,6 @@ chrome.webRequest.onSendHeaders.addListener(
 
     // Capture request headers
     send_headers = info.requestHeaders;
-    // console.log(send_headers.toString());
-    // console.log(send_headers2.toString());
-
-    send_headers.forEach(function (item, index, array) {
-      if (item["value"] != send_headers2[index]["value"]) {
-        console.log(item["name"]);
-        console.log(item["value"]);
-        console.log(send_headers2[index]["value"]);
-        console.log(item["value"] == send_headers2[index]["value"]);
-      }
-    })
 
     console.log("Captuered Request headers in SyncMeetingSpaceCollections:");
     console.log(send_headers);
@@ -191,8 +113,8 @@ chrome.webRequest.onSendHeaders.addListener(
       "https://meet.google.com/$rpc/google.rtc.meetings.v1.MeetingSpaceService/SyncMeetingSpaceCollections"
     ]
   },
-  ["requestHeaders", "extraHeaders"]);
-
+  ["requestHeaders", "extraHeaders"]
+);
 
 function process_chrome_message(request, sender, sendResponse) {
   console.log("background.js: process_chrome_message() called.")
@@ -269,4 +191,14 @@ chrome.webRequest.onBeforeRequest.addListener(
 
 function ab2str(buf) {
   return String.fromCharCode.apply(null, new Uint8Array(buf));
+}
+
+function arrayBufferToBase64(buffer) {
+  var binary = '';
+  var bytes = new Uint8Array(buffer);
+  var len = bytes.byteLength;
+  for (var i = 0; i < len; i++) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+  return window.btoa(binary);
 }
