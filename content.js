@@ -8,26 +8,32 @@ var skip_headers = [
   "Accept-Encoding", "sec-ch-ua", "sec-ch-ua-mobile"];
 
 // There are two process_chrome_message() functions. Why ??
-chrome.runtime.onMessage.addListener(process_chrome_message);
+chrome.runtime.onMessage.addListener(
+  function (request, sender, sendResponse) {
+    console.trace();
+    console.log(request);
 
-function process_chrome_message(request, sender, sendResponse) {
-  console.trace();
-  console.log(request);
-
-  if (request.command == 'createDevice') {
-    create_device(request, sendResponse);
-  } else if (request.command == 'start_recording') {
-    console.log("start_recording event is fired");
-    start_recording(request, sendResponse);
+    if (request.command == 'createDevice') {
+      create_device(request, sendResponse);
+    } else if (request.command == 'start_recording') {
+      console.log("start_recording event is fired");
+      start_recording(request, sendResponse);
+    } else if (request.command == 'stop_recording') {
+      stop_recording(request, sendResponse);
+    }
+    return true;
   }
-  return true;
-}
+);
 
+// Request create device so that send back the response to background.js
 function create_device(request, sendResponse) {
-  console.log("content.js: create_device() called");
+  console.trace()
+
   var xrequest = new XMLHttpRequest();
   xrequest.withCredentials = true;
+
   xrequest.open("POST", request.url + '?', true); // append ? to avoid our webRequests
+
   for (i = 0; i < request.headers.length; i++) {
     if (!skip_headers.includes(request.headers[i].name)) {
       xrequest.setRequestHeader(request.headers[i].name, request.headers[i].value);
@@ -38,17 +44,32 @@ function create_device(request, sendResponse) {
     console.log('sending response: ' + this.responseText);
     sendResponse({ body: this.responseText });
   };
+
   var request_body = base64ToArrayBuffer(request.reqbody);
   xrequest.send(request_body);
 }
 
 // Start recording sequence
 function start_recording(request, sendResponse) {
-  console.log("content.js: start_recording() called");
+  console.trace();
+
   create_meeting_recording(request);
+
+  sendResponse("ok");
+}
+
+// Stop recording
+function stop_recording(request, sendResponse) {
+  console.trace();
+
+  update_meeting_recording(request, "stop")
+
+  sendResponse("ok");
 }
 
 // Send CreateMeetingRecording
+var recording_id;
+
 function create_meeting_recording(request) {
   console.log("create_meeting_recording called");
   var mrequest = new XMLHttpRequest();
@@ -61,12 +82,16 @@ function create_meeting_recording(request) {
   );
 
   mrequest.onload = function (e) {
+    console.trace();
+
     console.log('start recording response in base64: ' + this.responseText);
     var response_str = window.atob(this.responseText)
     console.log(response_str);
-    var recording_id = response_str.match("Cspaces/.*/recordings/[a-f,0-9,-]*")[0];
+
+    recording_id = response_str.match("Cspaces/.*/recordings/[a-f,0-9,-]*")[0];
     console.log(recording_id);
-    list_meeting_recording_acks(request, recording_id);
+
+    list_meeting_recording_acks(request);
   };
 
   // Make headers except unnecessary ones
@@ -104,7 +129,7 @@ function create_meeting_recording_payload(str) {
   return bytes;
 }
 
-function list_meeting_recording_acks(request, recording_id) {
+function list_meeting_recording_acks(request) {
   console.log("list_meeting_recording_acks called");
   var mrequest = new XMLHttpRequest();
 
@@ -121,7 +146,7 @@ function list_meeting_recording_acks(request, recording_id) {
     var response_str = window.atob(this.responseText)
     console.log(response_str);
 
-    update_meeting_recording(request, recording_id, "start");
+    update_meeting_recording(request, "start");
   };
 
   // Make headers except unnecessary ones
@@ -131,7 +156,7 @@ function list_meeting_recording_acks(request, recording_id) {
     }
   }
 
-  var payload = list_meeting_recording_acks_payload(recording_id)
+  var payload = list_meeting_recording_acks_payload();
   console.log("sending: " + payload);
   mrequest.send(payload);
 }
@@ -140,16 +165,16 @@ function list_meeting_recording_acks(request, recording_id) {
 0: 10
 1-68: Cspaces/CAgJXUk_4r8B/recordings/f6550ece-df38-4898-b866-6eb9bb1b36fd
 */
-function list_meeting_recording_acks_payload(str) {
+function list_meeting_recording_acks_payload() {
   var bytes = new Uint8Array(69);
   bytes[0] = 10;
   for (var i = 1; i <= 68; i++) {
-    bytes[i] = str.charCodeAt(i - 1);
+    bytes[i] = recording_id.charCodeAt(i - 1);
   }
   return bytes;
 }
 
-function update_meeting_recording(request, recording_id, command) {
+function update_meeting_recording(request, command) {
   console.log("update_meeting_recording called");
   var mrequest = new XMLHttpRequest();
 
@@ -174,7 +199,7 @@ function update_meeting_recording(request, recording_id, command) {
     }
   }
 
-  var payload = update_meeting_recording_payload(recording_id, command);
+  var payload = update_meeting_recording_payload(command);
   console.log("sending: " + payload);
   mrequest.send(payload);
 }
@@ -189,13 +214,13 @@ function update_meeting_recording(request, recording_id, command) {
 73: 104
 74: 1
 */
-function update_meeting_recording_payload(str, command) {
+function update_meeting_recording_payload(command) {
   var bytes = new Uint8Array(75);
   bytes[0] = 10;
   bytes[1] = 73;
   bytes[2] = 10;
   for (var i = 3; i <= 70; i++) {
-    bytes[i] = str.charCodeAt(i - 3);
+    bytes[i] = recording_id.charCodeAt(i - 3);
   }
   bytes[71] = 40;
   if (command == "start") {
