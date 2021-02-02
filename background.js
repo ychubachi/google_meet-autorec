@@ -172,6 +172,7 @@ function send_update_to_inject(command) {
   );
 }
 
+// Watch MeetingRecordingService requests
 chrome.webRequest.onBeforeRequest.addListener(
   function (info) {
     console.log("background.js: chrome.webRequest.onBeforeRequest listener is called");
@@ -191,6 +192,8 @@ chrome.webRequest.onBeforeRequest.addListener(
   },
   ["requestBody", "extraHeaders"]
 );
+
+// ------------------------------------------------------------
 
 function ab2str(buf) {
   return String.fromCharCode.apply(null, new Uint8Array(buf));
