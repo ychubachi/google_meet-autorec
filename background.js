@@ -4,7 +4,8 @@ console.log("background.js loaded");
   watch CreatMeetingDevice and record our device ID(s)
   Step 1. In onBeforeRequest: get magic strings from the request body which includes device id and so on.
 */
-var create_device_body;
+// var create_device_body;
+var reqbody;
 
 chrome.webRequest.onBeforeRequest.addListener(
   function (info) {
@@ -15,8 +16,10 @@ chrome.webRequest.onBeforeRequest.addListener(
     // Capture request body
     create_device_body = info.requestBody.raw[0].bytes;
 
-    console.log("Captuered Request Body in CreateMeetingDevice:");
+    console.log("Request Body in CreateMeetingDevice captured:");
     console.log(create_device_body);
+    reqbody = arrayBufferToBase64(create_device_body);
+    console.log(reqbody);
     return true;
   },
   {
@@ -24,7 +27,8 @@ chrome.webRequest.onBeforeRequest.addListener(
       "https://meet.google.com/$rpc/google.rtc.meetings.v1.MeetingDeviceService/CreateMeetingDevice"
     ]
   },
-  ["requestBody", "extraHeaders"]);
+  ["requestBody", "extraHeaders"]
+);
 
 /*
   watch CreatMeetingDevice and record our device ID(s)
@@ -44,20 +48,23 @@ chrome.webRequest.onSendHeaders.addListener(
 
     console.log("Sending message to content.js");
 
+    // send a message to content.js
     chrome.tabs.query(
       {
         active: true, currentWindow: true
       },
       function (tabs) {
-        reqbody = arrayBufferToBase64(create_device_body);
+        console.trace();
 
-        // send a message to content.js
         chrome.tabs.sendMessage(
           tabs[0].id,
           {
             command: 'createDevice', url: info.url, reqbody: reqbody, headers: info.requestHeaders
           },
           function (mresponse) {
+            console.trace();
+
+            // decode response body
             var create_device_response = mresponse.body;
             var create_decoded = atob(create_device_response);
             console.log('decoded response: ' + create_decoded);
