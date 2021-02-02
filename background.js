@@ -7,6 +7,7 @@ var space_id;
 var ignore_device_ids = [];
 var create_device_body;
 var send_headers;
+var send_headers2;
 
 function arrayBufferToBase64(buffer) {
   var binary = '';
@@ -18,24 +19,6 @@ function arrayBufferToBase64(buffer) {
   return window.btoa(binary);
 }
 
-// watch SyncMeetingSpaceCollections and capture request headers
-chrome.webRequest.onSendHeaders.addListener(
-  function (info) {
-    if (info.initiator != 'https://meet.google.com') {
-      console.log('Ignoring SyncMeetingSpaceCollections call from ' + info.initiator);
-      //return {cancel: false};
-    }
-    send_headers = info.requestHeaders;
-  },
-  // filters
-  {
-    urls: [
-      "https://meet.google.com/$rpc/google.rtc.meetings.v1.MeetingSpaceService/SyncMeetingSpaceCollections"
-    ],
-    types: ["xmlhttprequest"]
-  },
-  ["requestHeaders", "extraHeaders"]);
-
 /*
   watch CreatMeetingDevice and record our device ID(s)
   1. In onBeforeRequest: get magic strings from the request body which includes device id and so on.
@@ -44,23 +27,74 @@ chrome.webRequest.onSendHeaders.addListener(
 
 chrome.webRequest.onBeforeRequest.addListener(
   function (info) {
-    if (info.initiator != 'https://meet.google.com') {
-      console.log('Ignoring CreatingMeetingDevice call from ' + info.initiator);
-      return { cancel: false };
-    }
+    console.trace();
+    console.log(info.url);
+    console.log(info);
+
+    // Capture request body
     create_device_body = info.requestBody.raw[0].bytes;
+
+    console.log("Captuered Request Body in CreateMeetingDevice:");
+    console.log(create_device_body);
     return true;
   },
   {
     urls: [
       "https://meet.google.com/$rpc/google.rtc.meetings.v1.MeetingDeviceService/CreateMeetingDevice"
-    ],
-    types: ["xmlhttprequest"]
+    ]
   },
   ["requestBody", "extraHeaders"]);
 
+function objectEquals(a, b) {
+
+  if (a === b) {
+    // 同一インスタンスならtrueを返す
+    return true;
+  }
+
+  // 比較対象双方のキー配列を取得する（順番保証のためソートをかける）
+  const aKeys = Object.keys(a).sort();
+  const bKeys = Object.keys(b).sort();
+
+  // 比較対象同士のキー配列を比較する
+  if (aKeys.toString() !== bKeys.toString()) {
+    console.log("aKeys=" + aKeys.toString());
+    console.log("bKeys=" + bKeys.toString());
+    // キーが違う場合はfalse
+    return false;
+  }
+
+  // 値をすべて調べる。
+  const wrongIndex = aKeys.findIndex(function (value) {
+    // 注意！これは等価演算子で正常に比較できるもののみを対象としています。
+    // つまり、ネストされたObjectやArrayなどには対応していないことに注意してください。
+    console.log("value=" + value);
+    if (a[value] !== b[value]) {
+      console.log("a[value]=" + a[value].toString());
+      console.log("b[value]=" + b[value].toString());
+    }
+    return a[value] !== b[value];
+  });
+
+  // 合致しないvalueがなければ、trueを返す。
+  return wrongIndex === -1;
+}
+
+// 
 chrome.webRequest.onSendHeaders.addListener(
   function (info) {
+    console.trace();
+    console.log(info.url);
+    console.log(info);
+
+    // Capture request headers
+    send_headers2 = info.requestHeaders;
+
+    console.log("Captuered Request headers in CreatingMeetingDevice (trial):");
+    console.log(send_headers2);
+
+    console.log("Sending message to content.js");
+
     if (info.initiator != 'https://meet.google.com') {
       console.log('Ignoring CreatingMeetingDevice call from ' + info.initiator);
       return { cancel: false };
@@ -127,6 +161,38 @@ chrome.webRequest.onSendHeaders.addListener(
   },
   ["requestHeaders", "extraHeaders"]
 );
+
+// watch SyncMeetingSpaceCollections and capture request headers
+chrome.webRequest.onSendHeaders.addListener(
+  function (info) {
+    console.trace();
+    console.log(info.url);
+    console.log(info);
+
+    // Capture request headers
+    send_headers = info.requestHeaders;
+    // console.log(send_headers.toString());
+    // console.log(send_headers2.toString());
+
+    send_headers.forEach(function (item, index, array) {
+      if (item["value"] != send_headers2[index]["value"]) {
+        console.log(item["name"]);
+        console.log(item["value"]);
+        console.log(send_headers2[index]["value"]);
+        console.log(item["value"] == send_headers2[index]["value"]);
+      }
+    })
+
+    console.log("Captuered Request headers in SyncMeetingSpaceCollections:");
+    console.log(send_headers);
+  },
+  {
+    urls: [
+      "https://meet.google.com/$rpc/google.rtc.meetings.v1.MeetingSpaceService/SyncMeetingSpaceCollections"
+    ]
+  },
+  ["requestHeaders", "extraHeaders"]);
+
 
 function process_chrome_message(request, sender, sendResponse) {
   console.log("background.js: process_chrome_message() called.")
