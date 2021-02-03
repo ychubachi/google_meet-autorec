@@ -155,7 +155,7 @@ function send_update_to_inject(command) {
       var message = {
         command: command,
         ignore_device_ids: ignore_device_ids,
-        send_headers: send_headers,
+        headers: send_headers,
         space_id: space_id
       };
       chrome.tabs.sendMessage(
