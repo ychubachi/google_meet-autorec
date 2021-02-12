@@ -112,7 +112,7 @@ chrome.runtime.onMessage.addListener(
     console.trace();
     console.trace(request);
 
-    send_update_to_inject(request.command);
+    send_command_to_content(request.command);
 
     sendResponse('done');
     return true;
@@ -121,11 +121,11 @@ chrome.runtime.onMessage.addListener(
 
 chrome.commands.onCommand.addListener(
   function (command) {
-    send_update_to_inject(command);
+    send_command_to_content(command);
   }
 );
 
-function send_update_to_inject(command) {
+function send_command_to_content(command) {
   console.trace();
 
   chrome.tabs.query(
@@ -142,11 +142,11 @@ function send_update_to_inject(command) {
       chrome.tabs.sendMessage(
         tabs[0].id,
         message,
-        function (mresponse) {
+        function (response) {
           if (chrome.runtime.lastError) {
-            console.log('no response from inject, let\'s just assume the best...');
+            console.log('no response from content, let\'s just assume the best...');
           }
-          console.log(mresponse);
+          console.log(response);
         }
       );
     }
