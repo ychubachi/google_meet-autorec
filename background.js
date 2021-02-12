@@ -4,8 +4,7 @@ console.log("background.js loaded");
   watch CreatMeetingDevice and record our device ID(s)
   Step 1. In onBeforeRequest: get magic strings from the request body which includes device id and so on.
 */
-// var create_device_body;
-var reqbody;
+var create_meeting_device_request_body;
 
 chrome.webRequest.onBeforeRequest.addListener(
   function (info) {
@@ -13,13 +12,13 @@ chrome.webRequest.onBeforeRequest.addListener(
     console.log(info.url);
     console.log(info);
 
-    // Capture request body
-    create_device_body = info.requestBody.raw[0].bytes;
+    // Capture CreateMeetingDevice request body
+    body = info.requestBody.raw[0].bytes;
 
     console.log("Request Body in CreateMeetingDevice captured:");
-    console.log(create_device_body);
-    reqbody = arrayBufferToBase64(create_device_body);
-    console.log(reqbody);
+    console.log(body);
+    create_meeting_device_request_body = arrayBufferToBase64(body);
+    console.log(create_meeting_device_request_body);
     return true;
   },
   {
@@ -34,7 +33,6 @@ chrome.webRequest.onBeforeRequest.addListener(
   watch CreatMeetingDevice and record our device ID(s)
   Step 2. In onSendHeaders: get device and space ids by re-requesting CreateMeetingDevice request.
 */
-var space_id_re = /@spaces\/(.*?)\/devices\//;
 var space_id;
 
 // if CreateMeetingDevice is called from Meet, we all so call it again.
@@ -57,23 +55,22 @@ chrome.webRequest.onSendHeaders.addListener(
         chrome.tabs.sendMessage(
           tabs[0].id,
           {
-            command: 'createDevice', url: info.url, reqbody: reqbody, headers: info.requestHeaders
+            command: 'createDevice', url: info.url, headers: info.requestHeaders, reqbody: create_meeting_device_request_body
           },
           function (response) {
             console.trace();
 
-            // decode response body
-            var create_decoded = atob(response.body);
-            console.log('decoded response: ' + create_decoded);
-
             // get space_id
-            var sresult = create_decoded.match(space_id_re);
-            if (sresult) {
-              space_id = sresult[1];
+            var decoded = atob(response.body);
+            var result = decoded.match(/@spaces\/(.*?)\/devices\//);
+            if (result) {
+              space_id = result[1];
               console.log("space_id: " + space_id);
             } else {
               console.log('no space id on CreateMeeting, uh oh');
             }
+
+            // Now we can start recording
           }
         );
       }
@@ -137,13 +134,8 @@ function send_update_to_inject(command) {
     },
     function (tabs) {
       console.log(command);
-      /*
-      console.log('ignore devices:');
-      console.log(ignore_device_ids);
-      */
       var message = {
         command: command,
-        // ignore_device_ids: ignore_device_ids,
         headers: send_headers,
         space_id: space_id
       };
