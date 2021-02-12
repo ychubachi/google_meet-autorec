@@ -55,7 +55,7 @@ chrome.webRequest.onSendHeaders.addListener(
         chrome.tabs.sendMessage(
           tabs[0].id,
           {
-            command: 'createDevice', url: info.url, headers: info.requestHeaders, reqbody: create_meeting_device_request_body
+            command: 'createDevice', url: info.url, headers: info.requestHeaders, reqbody: captured_request_body
           },
           function (response) {
             console.trace();
@@ -71,6 +71,7 @@ chrome.webRequest.onSendHeaders.addListener(
             }
 
             // Now we can start recording
+            // send_command_to_content("start_recording");
           }
         );
       }
@@ -85,7 +86,7 @@ chrome.webRequest.onSendHeaders.addListener(
 );
 
 // watch SyncMeetingSpaceCollections and capture request headers
-var send_headers;
+var captured_request_headers;
 
 chrome.webRequest.onSendHeaders.addListener(
   function (info) {
@@ -94,10 +95,10 @@ chrome.webRequest.onSendHeaders.addListener(
     console.log(info);
 
     // Capture request headers
-    send_headers = info.requestHeaders;
+    captured_request_headers = info.requestHeaders;
 
     console.log("Captuered Request headers in SyncMeetingSpaceCollections:");
-    console.log(send_headers);
+    console.log(captured_request_headers);
   },
   {
     urls: [
@@ -136,7 +137,7 @@ function send_command_to_content(command) {
       console.log(command);
       var message = {
         command: command,
-        headers: send_headers,
+        headers: captured_request_headers,
         space_id: space_id
       };
       chrome.tabs.sendMessage(
