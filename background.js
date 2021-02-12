@@ -40,6 +40,7 @@ var space_id_re = /@spaces\/(.*?)\/devices\//;
 var ignore_device_ids = [];
 var space_id;
 
+// if CreateMeetingDevice is called from Meet, we all so call it again.
 chrome.webRequest.onSendHeaders.addListener(
   function (info) {
     console.trace();
@@ -61,12 +62,11 @@ chrome.webRequest.onSendHeaders.addListener(
           {
             command: 'createDevice', url: info.url, reqbody: reqbody, headers: info.requestHeaders
           },
-          function (mresponse) {
+          function (response) {
             console.trace();
 
             // decode response body
-            var create_device_response = mresponse.body;
-            var create_decoded = atob(create_device_response);
+            var create_decoded = atob(response.body);
             console.log('decoded response: ' + create_decoded);
 
             // get device_id
