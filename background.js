@@ -34,10 +34,7 @@ chrome.webRequest.onBeforeRequest.addListener(
   watch CreatMeetingDevice and record our device ID(s)
   Step 2. In onSendHeaders: get device and space ids by re-requesting CreateMeetingDevice request.
 */
-var device_id_re = /@spaces\/.*\/devices\/([a-f,0-9,-]*)/;
 var space_id_re = /@spaces\/(.*?)\/devices\//;
-
-var ignore_device_ids = [];
 var space_id;
 
 // if CreateMeetingDevice is called from Meet, we all so call it again.
@@ -68,16 +65,6 @@ chrome.webRequest.onSendHeaders.addListener(
             // decode response body
             var create_decoded = atob(response.body);
             console.log('decoded response: ' + create_decoded);
-
-            // get device_id
-            var result = create_decoded.match(device_id_re);
-            if (result) {
-              var device_id = result[1];
-              ignore_device_ids.push(device_id);
-              console.log('device_id: ' + device_id);
-            } else {
-              console.log('no device id on CreatMeetingDevice, doing nothing');
-            }
 
             // get space_id
             var sresult = create_decoded.match(space_id_re);
@@ -150,11 +137,13 @@ function send_update_to_inject(command) {
     },
     function (tabs) {
       console.log(command);
+      /*
       console.log('ignore devices:');
       console.log(ignore_device_ids);
+      */
       var message = {
         command: command,
-        ignore_device_ids: ignore_device_ids,
+        // ignore_device_ids: ignore_device_ids,
         headers: send_headers,
         space_id: space_id
       };
