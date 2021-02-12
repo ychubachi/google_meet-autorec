@@ -4,7 +4,7 @@ console.log("background.js loaded");
   watch CreatMeetingDevice and record our device ID(s)
   Step 1. In onBeforeRequest: get magic strings from the request body which includes device id and so on.
 */
-var create_meeting_device_request_body;
+var captured_request_body;
 
 chrome.webRequest.onBeforeRequest.addListener(
   function (info) {
@@ -17,8 +17,8 @@ chrome.webRequest.onBeforeRequest.addListener(
 
     console.log("Request Body in CreateMeetingDevice captured:");
     console.log(body);
-    create_meeting_device_request_body = arrayBufferToBase64(body);
-    console.log(create_meeting_device_request_body);
+    captured_request_body = arrayBufferToBase64(body);
+    console.log(captured_request_body);
     return true;
   },
   {
