@@ -71,7 +71,8 @@ chrome.webRequest.onSendHeaders.addListener(
             }
 
             // Now we can start recording
-            // send_command_to_content("start_recording");
+            console.log("Start recording");
+            send_command_to_content("start_recording");
           }
         );
       }
