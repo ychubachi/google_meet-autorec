@@ -173,26 +173,6 @@ function remove_unsafe_headers(headers) {
   return new_headers;
 }
 
-// Watch MeetingRecordingService requests for debug
-chrome.webRequest.onBeforeRequest.addListener(
-  function (info) {
-    console.log("background.js: chrome.webRequest.onBeforeRequest listener is called");
-    console.log(info);
-
-    var method = info.url.match("([^/]+?)?$")[1];
-    console.log("background.js: MeetingRecordingService/" + method + " is requested");
-
-    var body = info.requestBody.raw[0].bytes;
-    console.log(body);
-  },
-  {
-    urls: [
-      "https://meet.google.com/$rpc/google.rtc.meetings.v1.MeetingRecordingService/*"
-    ]
-  },
-  ["requestBody", "extraHeaders"]
-);
-
 function arrayBufferToBase64(buffer) {
   var binary = '';
   var bytes = new Uint8Array(buffer);
