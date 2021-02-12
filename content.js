@@ -4,8 +4,6 @@ chrome.runtime.onMessage.addListener(
     console.trace();
     console.log(request);
 
-    request.headers = remove_unsafe_headers(request.headers); // TODO here?
-
     if (request.command == 'createDevice') {
       create_device(request, sendResponse);
     } else if (request.command == 'start_recording') {
@@ -25,12 +23,12 @@ function create_device(request, sendResponse) {
   var xrequest = new XMLHttpRequest();
   xrequest.withCredentials = true;
 
-  xrequest.open("POST", request.url + '?', true); // append ? to avoid our webRequests
+  xrequest.open("POST", request.url + '?', true); // append ? to avoid our webRequests TODO: check
 
   request.headers.forEach(header => {
     xrequest.setRequestHeader(header.name, header.value);
   })
-  var request_body = base64ToArrayBuffer(request.reqbody); // TODO what is reqbody?
+  var request_body = base64ToArrayBuffer(request.body); // TODO: check
   xrequest.send(request_body);
 
   xrequest.onload = function (e) {
@@ -207,29 +205,6 @@ function update_meeting_recording_payload(command) {
   bytes[73] = 104;
   bytes[74] = 1;
   return bytes;
-}
-
-// ------------------------------------------------------------
-
-// Remove unsafe headers
-var unsafe_headers = [
-  "Cookie", "User-Agent", "Origin", "Sec-Fetch-Site",
-  "Sec-Fetch-Mode", "Sec-Fetch-Dest", "Referer",
-  "Accept-Encoding", "sec-ch-ua", "sec-ch-ua-mobile"];
-
-function remove_unsafe_headers(headers) {
-  var new_headers = Array();
-  headers.forEach(header => {
-    if (!unsafe_headers.includes(header.name)) {
-      new_headers.push(header);
-    }
-  });
-  return new_headers;
-}
-
-// ------------------------------------------------------------
-function ab2str(buf) { // TODO use?
-  return String.fromCharCode.apply(null, new Int8Array(buf));
 }
 
 function base64ToArrayBuffer(base64) { // TODO use?

@@ -4,7 +4,7 @@ console.log("background.js loaded");
   watch CreatMeetingDevice and record our device ID(s)
   Step 1. In onBeforeRequest: get magic strings from the request body which includes device id and so on.
 */
-var captured_request_body;
+var captured_cmd_request_body;
 
 chrome.webRequest.onBeforeRequest.addListener(
   function (info) {
@@ -17,8 +17,8 @@ chrome.webRequest.onBeforeRequest.addListener(
 
     console.log("Request Body in CreateMeetingDevice captured:");
     console.log(body);
-    captured_request_body = arrayBufferToBase64(body);
-    console.log(captured_request_body);
+    captured_cmd_request_body = arrayBufferToBase64(body);
+    console.log(captured_cmd_request_body);
     return true;
   },
   {
@@ -55,7 +55,10 @@ chrome.webRequest.onSendHeaders.addListener(
         chrome.tabs.sendMessage(
           tabs[0].id,
           {
-            command: 'createDevice', url: info.url, headers: info.requestHeaders, reqbody: captured_request_body
+            command: 'createDevice',
+            url: info.url,
+            headers: remove_unsafe_headers(info.requestHeaders),
+            body: captured_cmd_request_body
           },
           function (response) {
             console.trace();
@@ -86,7 +89,7 @@ chrome.webRequest.onSendHeaders.addListener(
 );
 
 // watch SyncMeetingSpaceCollections and capture request headers
-var captured_request_headers;
+var captured_smsc_request_headers;
 
 chrome.webRequest.onSendHeaders.addListener(
   function (info) {
@@ -95,10 +98,10 @@ chrome.webRequest.onSendHeaders.addListener(
     console.log(info);
 
     // Capture request headers
-    captured_request_headers = info.requestHeaders;
+    captured_smsc_request_headers = info.requestHeaders;
 
     console.log("Captuered Request headers in SyncMeetingSpaceCollections:");
-    console.log(captured_request_headers);
+    console.log(captured_smsc_request_headers);
   },
   {
     urls: [
@@ -135,14 +138,14 @@ function send_command_to_content(command) {
     },
     function (tabs) {
       console.log(command);
-      var message = {
-        command: command,
-        headers: captured_request_headers,
-        space_id: space_id
-      };
+
       chrome.tabs.sendMessage(
         tabs[0].id,
-        message,
+        {
+          command: command,
+          headers: remove_unsafe_headers(captured_smsc_request_headers),
+          space_id: space_id
+        },
         function (response) {
           if (chrome.runtime.lastError) {
             console.log('no response from content, let\'s just assume the best...');
@@ -154,7 +157,23 @@ function send_command_to_content(command) {
   );
 }
 
-// Watch MeetingRecordingService requests
+// Remove unsafe headers
+var unsafe_headers = [
+  "Cookie", "User-Agent", "Origin", "Sec-Fetch-Site",
+  "Sec-Fetch-Mode", "Sec-Fetch-Dest", "Referer",
+  "Accept-Encoding", "sec-ch-ua", "sec-ch-ua-mobile"];
+
+function remove_unsafe_headers(headers) {
+  var new_headers = Array();
+  headers.forEach(header => {
+    if (!unsafe_headers.includes(header.name)) {
+      new_headers.push(header);
+    }
+  });
+  return new_headers;
+}
+
+// Watch MeetingRecordingService requests for debug
 chrome.webRequest.onBeforeRequest.addListener(
   function (info) {
     console.log("background.js: chrome.webRequest.onBeforeRequest listener is called");
@@ -165,7 +184,6 @@ chrome.webRequest.onBeforeRequest.addListener(
 
     var body = info.requestBody.raw[0].bytes;
     console.log(body);
-    console.log(ab2str(body));
   },
   {
     urls: [
@@ -174,12 +192,6 @@ chrome.webRequest.onBeforeRequest.addListener(
   },
   ["requestBody", "extraHeaders"]
 );
-
-// ------------------------------------------------------------
-
-function ab2str(buf) {
-  return String.fromCharCode.apply(null, new Uint8Array(buf));
-}
 
 function arrayBufferToBase64(buffer) {
   var binary = '';
