@@ -61,8 +61,7 @@ chrome.webRequest.onSendHeaders.addListener(
             console.trace();
 
             // get space_id
-            var decoded = atob(response.body);
-            var result = decoded.match(/@spaces\/(.*?)\/devices\//);
+            var result = atob(response.body).match(/@spaces\/(.*?)\/devices\//);
             if (result) {
               space_id = result[1];
               console.log("space_id: " + space_id);

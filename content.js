@@ -78,8 +78,8 @@ function create_meeting_recording(request) {
   mrequest.onload = function (e) {
     console.trace();
 
-    console.log('start recording response in base64: ' + this.responseText); // this = XHTTPRequest
-    // response text contains "The conference is gon" on error
+    console.log('start recording response in base64: ' + this.responseText); // this = XMLHttpRequest
+    // response text contains "The conference is gone" on error
     var response_str = window.atob(this.responseText)
     console.log(response_str);
 
