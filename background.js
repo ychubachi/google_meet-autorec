@@ -35,7 +35,7 @@ chrome.webRequest.onBeforeRequest.addListener(
 */
 var space_id;
 
-// if CreateMeetingDevice is called from Meet, we all so call it again.
+// if CreateMeetingDevice is called from Meet, we all so call it again to obtain space_id.
 chrome.webRequest.onSendHeaders.addListener(
   function (info) {
     console.trace();
