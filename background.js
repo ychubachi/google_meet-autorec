@@ -72,9 +72,9 @@ chrome.webRequest.onSendHeaders.addListener(
               console.log('no space id on CreateMeeting, uh oh');
             }
 
-            // Now we can start recording
-            console.log("Start recording");
-            send_command_to_content("start_recording");
+            // TODO: Now we can start recording
+            // console.log("Start recording");
+            // send_command_to_content("start_recording");
           }
         );
       }
