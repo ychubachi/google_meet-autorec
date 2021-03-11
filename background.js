@@ -1,7 +1,7 @@
 console.log("background.js loaded");
 
 chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
-  console.log(changeInfo)
+  // console.log(changeInfo)
 })
 
 /*
@@ -77,9 +77,11 @@ chrome.webRequest.onSendHeaders.addListener(
               console.log('no space id on CreateMeeting, uh oh');
             }
 
-            // TODO: Now we can start recording
+            // Now we can start recording
+            // if (is_autorec_meeting(info.url)) {
             // console.log("Start recording");
             // send_command_to_content("start_recording");
+            // }
           }
         );
       }
@@ -99,14 +101,18 @@ var captured_s_m_s_c_request_headers;
 chrome.webRequest.onSendHeaders.addListener(
   function (info) {
     console.trace();
+    /*
     console.log(info.url);
     console.log(info);
+    */
 
     // Capture request headers
     captured_s_m_s_c_request_headers = info.requestHeaders;
 
+    /*
     console.log("Captuered Request headers in SyncMeetingSpaceCollections:");
     console.log(captured_s_m_s_c_request_headers);
+    */
   },
   {
     urls: [
@@ -190,4 +196,21 @@ function arrayBufferToBase64(buffer) {
     binary += String.fromCharCode(bytes[i]);
   }
   return window.btoa(binary);
+}
+
+/**
+ * Check if this google meet url is in the autrec list.
+ * 
+ * https://meet.google.com/rcc-ibtf-myd -> yes
+ * other -> no
+ * @param {*} url 
+ * @returns 
+ */
+function is_autorec_meeting(url) {
+  console.trace();
+  if (url == "https://meet.google.com/rcc-ibtf-myd") {
+    return true;
+  } else {
+    return false;
+  }
 }
