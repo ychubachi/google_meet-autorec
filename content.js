@@ -51,7 +51,7 @@ function stop_recording(request, sendResponse) {
   sendResponse("ok");
 }
 
-// Send CreateMeetingRecording
+// Step 1/3: Send CreateMeetingRecording
 var recording_id;
 
 function create_meeting_recording(request) {
@@ -111,6 +111,10 @@ function create_meeting_recording_payload(str) {
   return bytes;
 }
 
+/**
+ * Step 2/3: Send listMeetingRecordingAcks
+ * @param {*} request 
+ */
 function list_meeting_recording_acks(request) {
   console.log("list_meeting_recording_acks called");
   var mrequest = new XMLHttpRequest();
@@ -152,6 +156,11 @@ function list_meeting_recording_acks_payload() {
   return bytes;
 }
 
+/**
+ * Step 3/3: Send updateMeetingRecording
+ * @param {*} request 
+ * @param {*} command 
+ */
 function update_meeting_recording(request, command) {
   console.log("update_meeting_recording called");
   var mrequest = new XMLHttpRequest();
