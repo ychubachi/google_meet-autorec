@@ -5,10 +5,12 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
 })
 
 /*
-  watch CreatMeetingDevice and record our device ID(s)
-  Step 1. In onBeforeRequest: get magic strings from the request body which includes device id and so on.
+  Onece Google Meet starts, it send CreateMeetingDevice request to the server.
+  We watch the request in order to get our device ID(s).
+
+  Step 1. "onBeforeRequest": get magic strings from the request body which includes device id and so on.
 */
-var captured_cmd_request_body;
+var captured_c_m_d_request_body;
 
 chrome.webRequest.onBeforeRequest.addListener(
   function (info) {
@@ -21,8 +23,8 @@ chrome.webRequest.onBeforeRequest.addListener(
 
     console.log("Request Body in CreateMeetingDevice captured:");
     console.log(body);
-    captured_cmd_request_body = arrayBufferToBase64(body);
-    console.log(captured_cmd_request_body);
+    captured_c_m_d_request_body = arrayBufferToBase64(body);
+    console.log(captured_c_m_d_request_body);
     return true;
   },
   {
@@ -34,12 +36,11 @@ chrome.webRequest.onBeforeRequest.addListener(
 );
 
 /*
-  watch CreatMeetingDevice and record our device ID(s)
-  Step 2. In onSendHeaders: get device and space ids by re-requesting CreateMeetingDevice request.
+  When CreateMeetingDevice is called from Meet, we also call it again to obtain space_id from its responce.
+  Step 2. "onSendHeaders": get device and space ids by re-requesting CreateMeetingDevice request.
 */
 var space_id;
 
-// if CreateMeetingDevice is called from Meet, we all so call it again to obtain space_id.
 chrome.webRequest.onSendHeaders.addListener(
   function (info) {
     console.trace();
@@ -62,7 +63,7 @@ chrome.webRequest.onSendHeaders.addListener(
             command: 'createDevice',
             url: info.url,
             headers: remove_unsafe_headers(info.requestHeaders),
-            body: captured_cmd_request_body
+            body: captured_c_m_d_request_body
           },
           function (response) {
             console.trace();
@@ -93,7 +94,7 @@ chrome.webRequest.onSendHeaders.addListener(
 );
 
 // watch SyncMeetingSpaceCollections and capture request headers
-var captured_smsc_request_headers;
+var captured_s_m_s_c_request_headers;
 
 chrome.webRequest.onSendHeaders.addListener(
   function (info) {
@@ -102,10 +103,10 @@ chrome.webRequest.onSendHeaders.addListener(
     console.log(info);
 
     // Capture request headers
-    captured_smsc_request_headers = info.requestHeaders;
+    captured_s_m_s_c_request_headers = info.requestHeaders;
 
     console.log("Captuered Request headers in SyncMeetingSpaceCollections:");
-    console.log(captured_smsc_request_headers);
+    console.log(captured_s_m_s_c_request_headers);
   },
   {
     urls: [
@@ -133,6 +134,10 @@ chrome.commands.onCommand.addListener(
   }
 );
 
+/**
+ * Send commonds to content.js with captured headers and space_id.
+ * @param {*} command 
+ */
 function send_command_to_content(command) {
   console.trace();
 
@@ -147,7 +152,7 @@ function send_command_to_content(command) {
         tabs[0].id,
         {
           command: command,
-          headers: remove_unsafe_headers(captured_smsc_request_headers),
+          headers: remove_unsafe_headers(captured_s_m_s_c_request_headers),
           space_id: space_id
         },
         function (response) {
