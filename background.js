@@ -1,5 +1,9 @@
 console.log("background.js loaded");
 
+chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
+  console.log(changeInfo)
+})
+
 /*
   watch CreatMeetingDevice and record our device ID(s)
   Step 1. In onBeforeRequest: get magic strings from the request body which includes device id and so on.

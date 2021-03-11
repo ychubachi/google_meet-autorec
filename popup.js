@@ -1,7 +1,9 @@
 console.log("popup.js");
 
+var current_url;
+
 chrome.tabs.query({ active: true, currentWindow: true }, (e) => {
-  const current_url = e[0].url;
+  current_url = e[0].url;
   const meet_id = current_url.match("^https://meet.google.com/(.*)$");
   if (meet_id) {
     $("#meet_id").text(meet_id[1]);
@@ -11,6 +13,17 @@ chrome.tabs.query({ active: true, currentWindow: true }, (e) => {
 $("#checkbox_autorec").on("change", () => {
   if ($("#checkbox_autorec").prop("checked")) {
     $("#textarea_description").prop('disabled', false);
+    let key = "autorec";
+    let value = current_url;
+    chrome.storage.sync.set({ autorec: value }, function () {
+      console.log('Value is set to ' + value);
+
+      chrome.storage.sync.get(null, function (result) {
+        console.log(result);
+        console.log('Value currently is ' + result[key]);
+      });
+
+    });
   } else {
     $("#textarea_description").prop('disabled', true);
   }
