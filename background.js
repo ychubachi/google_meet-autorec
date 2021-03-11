@@ -8,7 +8,7 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
   Onece Google Meet starts, it send CreateMeetingDevice request to the server.
   We watch the request in order to get our device ID(s).
 
-  Step 1. "onBeforeRequest": get magic strings from the request body which includes device id and so on.
+  Step 1/2. "onBeforeRequest": get magic strings from the request body which includes device id and so on.
 */
 var captured_c_m_d_request_body;
 
@@ -37,7 +37,7 @@ chrome.webRequest.onBeforeRequest.addListener(
 
 /*
   When CreateMeetingDevice is called from Meet, we also call it again to obtain space_id from its responce.
-  Step 2. "onSendHeaders": get device and space ids by re-requesting CreateMeetingDevice request.
+  Step 2/2. "onSendHeaders": get device and space ids by re-requesting CreateMeetingDevice request.
 */
 var space_id;
 
