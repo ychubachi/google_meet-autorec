@@ -7,14 +7,28 @@ chrome.runtime.onMessage.addListener(
     if (request.command == 'createDevice') {
       create_device(request, sendResponse);
     } else if (request.command == 'start_recording') {
-      console.log("start_recording event is fired");
       start_recording(request, sendResponse);
     } else if (request.command == 'stop_recording') {
       stop_recording(request, sendResponse);
+    } else if (request.command == 'status') {
+      sendResponse(get_status());
     }
     return true;
   }
 );
+
+function get_status() {
+  console.trace();
+  var elems = document.querySelectorAll('div[jsname="CQylAd"]');
+  console.log(elems);
+
+  if (elems.length > 0) {
+    return "ok to record";
+  } else {
+    return "ng";
+  }
+
+}
 
 // Request create device so that send back the response to background.js
 function create_device(request, sendResponse) {

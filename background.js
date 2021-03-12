@@ -113,6 +113,24 @@ chrome.webRequest.onSendHeaders.addListener(
     console.log("Captuered Request headers in SyncMeetingSpaceCollections:");
     console.log(captured_s_m_s_c_request_headers);
     */
+
+    chrome.tabs.query(
+      {
+        active: true, currentWindow: true
+      },
+      function (tabs) {
+        chrome.tabs.sendMessage(
+          tabs[0].id,
+          {
+            command: "status",
+          },
+          function (response) {
+            console.log(response);
+          },
+        );
+      }
+    );
+
   },
   {
     urls: [
