@@ -1,17 +1,20 @@
 console.log("background.js loaded");
 
-chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
-  // console.log(changeInfo)
-})
+// Request body of CreateMeetingDevice
+var captured_request_body;
+// Request header of SyncMeetingSpaceCollections
+var captured_request_headers;
+// Meeting space id
+var space_id;
 
 /*
-  Onece Google Meet starts, it send CreateMeetingDevice request to the server.
+  Onece Google Meet is started, it sends CreateMeetingDevice request
+  to the server.
   We watch the request in order to get our device ID(s).
 
-  Step 1/2. "onBeforeRequest": get magic strings from the request body which includes device id and so on.
+  Step 1/2. "onBeforeRequest": get magic strings from the request body
+            which includes device id and so on.
 */
-var captured_c_m_d_request_body;
-
 chrome.webRequest.onBeforeRequest.addListener(
   function (info) {
     console.trace();
@@ -23,8 +26,8 @@ chrome.webRequest.onBeforeRequest.addListener(
 
     console.log("Request Body in CreateMeetingDevice captured:");
     console.log(body);
-    captured_c_m_d_request_body = arrayBufferToBase64(body);
-    console.log(captured_c_m_d_request_body);
+    captured_request_body = arrayBufferToBase64(body);
+    console.log(captured_request_body);
     return true;
   },
   {
@@ -36,11 +39,12 @@ chrome.webRequest.onBeforeRequest.addListener(
 );
 
 /*
-  When CreateMeetingDevice is called from Meet, we also call it again to obtain space_id from its responce.
-  Step 2/2. "onSendHeaders": get device and space ids by re-requesting CreateMeetingDevice request.
-*/
-var space_id;
+  When CreateMeetingDevice is called from Meet, we also call it again
+  to obtain space_id from its responce.
 
+  Step 2/2. "onSendHeaders": get device id and space id by simulating
+  CreateMeetingDevice request.
+*/
 chrome.webRequest.onSendHeaders.addListener(
   function (info) {
     console.trace();
@@ -63,7 +67,7 @@ chrome.webRequest.onSendHeaders.addListener(
             command: 'createDevice',
             url: info.url,
             headers: remove_unsafe_headers(info.requestHeaders),
-            body: captured_c_m_d_request_body
+            body: captured_request_body
           },
           function (response) {
             console.trace();
@@ -95,30 +99,40 @@ chrome.webRequest.onSendHeaders.addListener(
   ["requestHeaders", "extraHeaders"]
 );
 
-// watch SyncMeetingSpaceCollections and capture request headers
-var captured_s_m_s_c_request_headers;
+/**
+ * watch SyncMeetingSpaceCollections and capture request headers
+ */
+chrome.webRequest.onSendHeaders.addListener(
+  function (info) {
+    // console.trace();
 
+    captured_request_headers = info.requestHeaders;
+  },
+  {
+    urls: [
+      "https://meet.google.com/$rpc/google.rtc.meetings.v1.MeetingSpaceService/SyncMeetingSpaceCollections"
+    ]
+  },
+  ["requestHeaders", "extraHeaders"]
+);
+
+/**
+ * Check client status
+ */
 chrome.webRequest.onSendHeaders.addListener(
   function (info) {
     console.trace();
-    /*
-    console.log(info.url);
-    console.log(info);
-    */
-
-    // Capture request headers
-    captured_s_m_s_c_request_headers = info.requestHeaders;
-
-    /*
-    console.log("Captuered Request headers in SyncMeetingSpaceCollections:");
-    console.log(captured_s_m_s_c_request_headers);
-    */
 
     chrome.tabs.query(
       {
         active: true, currentWindow: true
       },
       function (tabs) {
+        if (!tabs) {
+          console.log("Could not get tabs");
+          return;
+        }
+
         chrome.tabs.sendMessage(
           tabs[0].id,
           {
@@ -130,7 +144,6 @@ chrome.webRequest.onSendHeaders.addListener(
         );
       }
     );
-
   },
   {
     urls: [
@@ -176,7 +189,7 @@ function send_command_to_content(command) {
         tabs[0].id,
         {
           command: command,
-          headers: remove_unsafe_headers(captured_s_m_s_c_request_headers),
+          headers: remove_unsafe_headers(captured_request_headers),
           space_id: space_id
         },
         function (response) {
