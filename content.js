@@ -23,9 +23,9 @@ function get_status() {
   console.log(elems);
 
   if (elems.length > 0) {
-    return "can record";
+    return "can_record";
   } else {
-    return "can not record";
+    return "can_not_record";
   }
 
 }

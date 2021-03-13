@@ -6,6 +6,8 @@ var captured_request_body;
 var captured_request_headers;
 // Meeting space id
 var space_id;
+// Status
+var status = "can_not_record";
 
 /*
   Onece Google Meet is started, it sends CreateMeetingDevice request
@@ -80,12 +82,6 @@ chrome.webRequest.onSendHeaders.addListener(
             } else {
               console.log('no space id on CreateMeeting, uh oh');
             }
-
-            // Now we can start recording
-            // if (is_autorec_meeting(info.url)) {
-            // console.log("Start recording");
-            // send_command_to_content("start_recording");
-            // }
           }
         );
       }
@@ -140,6 +136,19 @@ chrome.webRequest.onSendHeaders.addListener(
           },
           function (response) {
             console.log(response);
+            const new_status = response;
+            if (status == "can_not_record"
+              && new_status == "can_record") {
+              console.log("START RECORD");
+
+              // Now we can start recording
+              // if (is_autorec_meeting(info.url)) {
+              console.log("Start recording");
+              send_command_to_content("start_recording");
+              // }
+            }
+            status = new_status;
+
           },
         );
       }
