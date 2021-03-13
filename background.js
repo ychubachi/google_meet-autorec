@@ -139,13 +139,11 @@ chrome.webRequest.onSendHeaders.addListener(
             const new_status = response;
             if (status == "can_not_record"
               && new_status == "can_record") {
-              console.log("START RECORD");
-
               // Now we can start recording
-              // if (is_autorec_meeting(info.url)) {
-              console.log("Start recording");
-              send_command_to_content("start_recording");
-              // }
+              if (is_autorec_meeting(tabs[0].url)) {
+                console.log("Start recording");
+                send_command_to_content("start_recording");
+              }
             }
             status = new_status;
 
