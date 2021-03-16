@@ -146,7 +146,6 @@ chrome.webRequest.onSendHeaders.addListener(
               }
             }
             status = new_status;
-
           },
         );
       }
