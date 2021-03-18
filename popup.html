@@ -6,20 +6,21 @@
 </head>
 
 <body style="width: 400px">
-  <div class="w3-container w3-green">
-    <div id="meet_id" class="w3-large w3-wide">meet id</div>
-  </div>
-  <div class="w3-container w3-margin">
-    <div>
-      <input id="checkbox_autorec" class="w3-check" type="checkbox" />
-      <label>Enable automatic recording</label>
-    </div>
+  <H1 class="w3-container w3-green w3-large">Google Meet AutoRec</H1>
+  <div class="w3-container">
+    <div id="meet_id">meet id</div>
+
     <div class="w3-margin-top">
       <textarea id="textarea_description" class="w3-input w3-border" type="text" placeholder="description"
         disabled="true"></textarea>
     </div>
 
-    <div class="w3-margin-top w3-bar w3-center">
+    <div>
+      <input id="checkbox_autorec" class="w3-check" type="checkbox" />
+      <label>Enable automatic recording</label>
+    </div>
+
+    <div class="w3-margin-top w3-margin-bottom w3-bar">
       <button id="start_recording" class="w3-button w3-round w3-red">Start Recording</button>
       <button id="stop_recording" class="w3-button w3-round w3-border w3-border-green">Stop Recording</button>
     </div>
