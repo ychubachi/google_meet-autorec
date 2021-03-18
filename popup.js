@@ -17,6 +17,9 @@ chrome.tabs.query({ active: true, currentWindow: true }, (e) => {
     */
   }
 
+  load_status();
+
+  /*
   get_description_from_list(current_url, function (description) {
     console.log("description=" + description);
     if (description) {
@@ -27,19 +30,11 @@ chrome.tabs.query({ active: true, currentWindow: true }, (e) => {
       $("#textarea_description").val("");
     }
   });
+  */
 });
 
-$("#checkbox_autorec").on("change", () => {
-  if ($("#checkbox_autorec").prop("checked")) {
-    $("#textarea_description").prop('disabled', false);
-    console.log("description enabled");
-  } else {
-    $("#textarea_description").prop('disabled', true);
-    console.log("description disabled");
-
-    delete_url_from_list(current_url);
-  }
-})
+$("#checkbox_autorec").on("change", save_status);
+$("#textarea_description").on("change", save_status);
 
 // event listeners
 $("#start_recording").on('click', start_recording);
@@ -49,9 +44,7 @@ $("#stop_recording").on('click', stop_recording);
 // Code snipets
 
 // To show all storage data
-chrome.storage.sync.get(null, function (result) {
-  console.log(result);
-});
+chrome.storage.sync.get(null, function (result) { console.log(result); });
 
 // To clear all strage data
 chrome.storage.sync.clear();
@@ -59,19 +52,6 @@ chrome.storage.sync.clear();
 
 function start_recording() {
   console.trace();
-
-  /*
-  chrome.storage.sync.get(null, function (result) {
-    console.log("old data:")
-    console.log(result);
-  });
-  */
-
-  // Update the auto recording list
-  if ($("#checkbox_autorec").prop("checked")) {
-    const description = $("#textarea_description").val();
-    add_url_to_list(current_url, description);
-  }
 
   /*
     chrome.runtime.sendMessage(
@@ -97,6 +77,51 @@ function stop_recording() {
   );
 }
 
+function save_status() {
+  console.trace();
+  const description = $("#textarea_description").val();
+  const enabled = $("#checkbox_autorec").prop("checked");
+  console.log("description=" + description);
+  console.log("enabled=" + enabled);
+
+  chrome.storage.sync.get("autorec", function (result) {
+    if (!result["autorec"]) {
+      console.log("create autorec property");
+      result = { autorec: {} };
+    }
+    if (enabled || description) {
+      result.autorec[current_url] = { description: description, enabled: enabled };
+      console.log(result.autorec);
+    } else {
+      delete result.autorec[current_url];
+    }
+
+    chrome.storage.sync.set({ autorec: result.autorec }, function () {
+      chrome.storage.sync.get(null, function (result) {
+        console.log("new data:");
+        console.log(result);
+      });
+    });
+  });
+}
+
+function load_status() {
+  console.trace();
+
+  chrome.storage.sync.get("autorec", function (result) {
+    if (!result["autorec"]) {
+      console.log("create autorec property");
+      result = { autorec: {} };
+    }
+    const data = result.autorec[current_url];
+    if (data) {
+      console.log(data.enabled);
+      console.log(data.description);
+      $("#checkbox_autorec").prop("checked", data.enabled);
+      $("#textarea_description").val(data.description);
+    }
+  });
+}
 
 function add_url_to_list(url, description) {
   chrome.storage.sync.get("autorec", function (result) {
