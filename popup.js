@@ -2,6 +2,11 @@ console.log("popup.js");
 
 var current_url;
 
+$("#checkbox_autorec").on("change", save_status);
+$("#textarea_description").on("change", save_status);
+$("#start_recording").on('click', start_recording);
+$("#stop_recording").on('click', stop_recording);
+
 chrome.tabs.query({ active: true, currentWindow: true }, (e) => {
   current_url = e[0].url;
   const meet_id = current_url.match("^https://meet.google.com/(.*)$");
@@ -16,53 +21,19 @@ chrome.tabs.query({ active: true, currentWindow: true }, (e) => {
     $("#stop_recording").prop("disabled", true);
     */
   }
-
   load_status();
-
-  /*
-  get_description_from_list(current_url, function (description) {
-    console.log("description=" + description);
-    if (description) {
-      $("#checkbox_autorec").prop("checked", true);
-      $("#textarea_description").val(description);
-    } else {
-      $("#checkbox_autorec").prop("checked", false);
-      $("#textarea_description").val("");
-    }
-  });
-  */
 });
-
-$("#checkbox_autorec").on("change", save_status);
-$("#textarea_description").on("change", save_status);
-
-// event listeners
-$("#start_recording").on('click', start_recording);
-$("#stop_recording").on('click', stop_recording);
-
-/*
-// Code snipets
-
-// To show all storage data
-chrome.storage.sync.get(null, function (result) { console.log(result); });
-
-// To clear all strage data
-chrome.storage.sync.clear();
-*/
 
 function start_recording() {
   console.trace();
-
-  /*
-    chrome.runtime.sendMessage(
-      {
-        command: "start_recording"
-      },
-      function (response) {
-        console.log(response);
-      }
-    );
-    */
+  chrome.runtime.sendMessage(
+    {
+      command: "start_recording"
+    },
+    function (response) {
+      console.log(response);
+    }
+  );
 }
 
 function stop_recording() {
@@ -76,6 +47,16 @@ function stop_recording() {
     }
   );
 }
+
+/*
+// Code snipets //
+
+// To show all storage data
+chrome.storage.sync.get(null, function (result) { console.log(result); });
+
+// To clear all strage data
+chrome.storage.sync.clear();
+*/
 
 function save_status() {
   console.trace();
@@ -120,55 +101,5 @@ function load_status() {
       $("#checkbox_autorec").prop("checked", data.enabled);
       $("#textarea_description").val(data.description);
     }
-  });
-}
-
-function add_url_to_list(url, description) {
-  chrome.storage.sync.get("autorec", function (result) {
-    console.log("key=autorec");
-    console.log(result);
-    if (!result["autorec"]) {
-      console.log("create autorec property");
-      result = { autorec: {} };
-    }
-    result.autorec[url] = description;
-    console.log(result.autorec);
-
-    chrome.storage.sync.set({ autorec: result.autorec }, function () {
-      chrome.storage.sync.get(null, function (result) {
-        console.log("new data:");
-        console.log(result);
-      });
-    });
-  });
-}
-
-function get_description_from_list(url, callback) {
-  chrome.storage.sync.get("autorec", function (result) {
-    if (!result["autorec"]) {
-      callback(null);
-    }
-    const description = result.autorec[url];
-    callback(description);
-  });
-}
-
-
-function delete_url_from_list(url) {
-  chrome.storage.sync.get("autorec", function (result) {
-    console.log("key=autorec");
-    console.log(result);
-    if (!result["autorec"]) {
-      return;
-    }
-    delete result.autorec[url];
-    console.log(result.autorec);
-
-    chrome.storage.sync.set({ autorec: result.autorec }, function () {
-      chrome.storage.sync.get(null, function (result) {
-        console.log("new data:");
-        console.log(result);
-      });
-    });
   });
 }
