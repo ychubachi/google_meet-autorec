@@ -10,8 +10,8 @@ chrome.tabs.query({ active: true, currentWindow: true }, (e) => {
   } else {
     $("#meet_id").text("Not Google Meet page");
     /*
-    $("#checkbox_autorec").prop("disabled", true);
     $("#textarea_description").prop("disabled", true);
+    $("#checkbox_autorec").prop("disabled", true);
     $("#start_recording").prop("disabled", true);
     $("#stop_recording").prop("disabled", true);
     */
