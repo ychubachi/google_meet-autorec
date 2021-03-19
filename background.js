@@ -1,4 +1,4 @@
-console.log("background.js loaded");
+// console.log("background.js loaded");
 
 // Request body of CreateMeetingDevice
 var captured_request_body;
@@ -19,17 +19,17 @@ var status = "can_not_record";
 */
 chrome.webRequest.onBeforeRequest.addListener(
   function (info) {
-    console.trace();
-    console.log(info.url);
-    console.log(info);
+    // console.trace();
+    // console.log(info.url);
+    // console.log(info);
 
     // Capture CreateMeetingDevice request body
     body = info.requestBody.raw[0].bytes;
 
-    console.log("Request Body in CreateMeetingDevice captured:");
-    console.log(body);
+    // console.log("Request Body in CreateMeetingDevice captured:");
+    // console.log(body);
     captured_request_body = arrayBufferToBase64(body);
-    console.log(captured_request_body);
+    // console.log(captured_request_body);
     return true;
   },
   {
@@ -42,18 +42,18 @@ chrome.webRequest.onBeforeRequest.addListener(
 
 /*
   When CreateMeetingDevice is called from Meet, we also call it again
-  to obtain space_id from its responce.
+  to obtain space_id from its response.
 
   Step 2/2. "onSendHeaders": get device id and space id by simulating
   CreateMeetingDevice request.
 */
 chrome.webRequest.onSendHeaders.addListener(
   function (info) {
-    console.trace();
-    console.log(info.url);
-    console.log(info);
+    // console.trace();
+    // console.log(info.url);
+    // console.log(info);
 
-    console.log("Sending message to content.js");
+    // console.log("Sending message to content.js");
 
     // send a message to content.js
     chrome.tabs.query(
@@ -61,7 +61,7 @@ chrome.webRequest.onSendHeaders.addListener(
         active: true, currentWindow: true
       },
       function (tabs) {
-        console.trace();
+        // console.trace();
 
         chrome.tabs.sendMessage(
           tabs[0].id,
@@ -72,15 +72,15 @@ chrome.webRequest.onSendHeaders.addListener(
             body: captured_request_body
           },
           function (response) {
-            console.trace();
+            // console.trace();
 
             // get space_id
             var result = atob(response.body).match(/@spaces\/(.*?)\/devices\//);
             if (result) {
               space_id = result[1];
-              console.log("space_id: " + space_id);
+              // console.log("space_id: " + space_id);
             } else {
-              console.log('no space id on CreateMeeting, uh oh');
+              // console.log('no space id on CreateMeeting, uh oh');
             }
           }
         );
@@ -117,25 +117,20 @@ chrome.webRequest.onSendHeaders.addListener(
  */
 chrome.webRequest.onSendHeaders.addListener(
   function (info) {
-    console.trace();
+    // console.trace();
 
     chrome.tabs.query(
       {
         active: true, currentWindow: true
       },
       function (tabs) {
-        if (!tabs) {
-          console.log("Could not get tabs");
-          return;
-        }
-
         chrome.tabs.sendMessage(
           tabs[0].id,
           {
             command: "status",
           },
           function (response) {
-            console.log(response);
+            // console.log(response);
             const new_status = response;
             if (status == "can_not_record"
               && new_status == "can_record") {
@@ -158,8 +153,8 @@ chrome.webRequest.onSendHeaders.addListener(
 
 chrome.runtime.onMessage.addListener(
   function (request, sender, sendResponse) {
-    console.trace();
-    console.trace(request);
+    // console.trace();
+    // console.trace(request);
 
     send_command_to_content(request.command);
 
@@ -175,18 +170,18 @@ chrome.commands.onCommand.addListener(
 );
 
 /**
- * Send commonds to content.js with captured headers and space_id.
+ * Send commonds with captured headers and space_id to content.js.
  * @param {*} command 
  */
 function send_command_to_content(command) {
-  console.trace();
+  // console.trace();
 
   chrome.tabs.query(
     {
       active: true, currentWindow: true
     },
     function (tabs) {
-      console.log(command);
+      // console.log(command);
 
       chrome.tabs.sendMessage(
         tabs[0].id,
@@ -197,9 +192,9 @@ function send_command_to_content(command) {
         },
         function (response) {
           if (chrome.runtime.lastError) {
-            console.log('no response from content, let\'s just assume the best...');
+            // console.log('no response from content, let\'s just assume the best...');
           }
-          console.log(response);
+          // console.log(response);
         }
       );
     }
@@ -233,24 +228,24 @@ function arrayBufferToBase64(buffer) {
 }
 
 /**
- * Check if this google meet url is in the autrec list.
+ * Start recording if this google meet url is enabled for recording.
  * 
- * https://meet.google.com/rcc-ibtf-myd -> yes
- * other -> no
  * @param {*} url 
  * @returns 
  */
 function autorec_meeting(url) {
-  console.trace();
+  // console.trace();
 
   chrome.storage.sync.get("autorec", function (result) {
-    console.log(result);
+    // console.log(result);
     if (result["autorec"]) {
       const data = result.autorec[url];
       if (data && data.enabled) {
         console.log("Start recording");
         send_command_to_content("start_recording");
+        return;
       }
     }
+    console.log("Do not start recording");
   });
 }
