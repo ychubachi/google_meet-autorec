@@ -13,6 +13,8 @@ chrome.tabs.query({ active: true, currentWindow: true }, (e) => {
   if (meet_id && meet_id[1].length > 0) {
     $("#meet_id").text(`Google Meet ID: ${meet_id[1]}`);
   } else {
+    $("#title").addClass("w3-gray");
+    $("#title").addClass("w3-orange w3-text-white");
     $("#main").addClass("w3-text-gray");
     $("#meet_id").text("This is not Google Meet meeting");
     $("#textarea_description").prop("disabled", true);
