@@ -139,11 +139,8 @@ chrome.webRequest.onSendHeaders.addListener(
             const new_status = response;
             if (status == "can_not_record"
               && new_status == "can_record") {
-              // Now we can start recording
-              if (is_autorec_meeting(tabs[0].url)) {
-                console.log("Start recording");
-                send_command_to_content("start_recording");
-              }
+              console.log("Now we can start recording");
+              autorec_meeting(tabs[0].url);
             }
             status = new_status;
           },
@@ -243,11 +240,17 @@ function arrayBufferToBase64(buffer) {
  * @param {*} url 
  * @returns 
  */
-function is_autorec_meeting(url) {
+function autorec_meeting(url) {
   console.trace();
-  if (url == "https://meet.google.com/rcc-ibtf-myd") {
-    return true;
-  } else {
-    return false;
-  }
+
+  chrome.storage.sync.get("autorec", function (result) {
+    console.log(result);
+    if (result["autorec"]) {
+      const data = result.autorec[url];
+      if (data && data.enabled) {
+        console.log("Start recording");
+        send_command_to_content("start_recording");
+      }
+    }
+  });
 }
