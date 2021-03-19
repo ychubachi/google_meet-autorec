@@ -32,10 +32,10 @@
         "default_title": "Google Meet AutoRec"
     },
     "icons": {
-        "16": "images/get_started16.png",
-        "32": "images/get_started32.png",
-        "48": "images/get_started48.png",
-        "128": "images/get_started128.png"
+        "16": "images/Google_Meet_AutoRec16.png",
+        "32": "images/Google_Meet_AutoRec32.png",
+        "48": "images/Google_Meet_AutoRec48.png",
+        "128": "images/Google_Meet_AutoRec128.png"
     },
     "commands": {
         "start_recording": {
