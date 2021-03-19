@@ -10,16 +10,15 @@ $("#stop_recording").on('click', stop_recording);
 chrome.tabs.query({ active: true, currentWindow: true }, (e) => {
   current_url = e[0].url;
   const meet_id = current_url.match("^https://meet.google.com/(.*)$");
-  if (meet_id) {
-    $("#meet_id").text(`Google Meet: ${meet_id[1]}`);
+  if (meet_id && meet_id[1].length > 0) {
+    $("#meet_id").text(`Google Meet ID: ${meet_id[1]}`);
   } else {
-    $("#meet_id").text("Not Google Meet page");
-    /*
+    $("#main").addClass("w3-text-gray");
+    $("#meet_id").text("This is not Google Meet meeting");
     $("#textarea_description").prop("disabled", true);
     $("#checkbox_autorec").prop("disabled", true);
     $("#start_recording").prop("disabled", true);
     $("#stop_recording").prop("disabled", true);
-    */
   }
   load_status();
 });

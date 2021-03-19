@@ -3,15 +3,19 @@
 
 <head>
   <link rel="stylesheet" href="popup.css">
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 </head>
 
 <body style="width: 400px">
-  <H1 class="w3-container w3-green w3-large">Google Meet AutoRec</H1>
-  <div class="w3-container">
-    <div id="meet_id">meet id</div>
+  <div class="w3-green w3-large w3-center">Google Meet AutoRec</div>
+  <div id="main" class="w3-container">
+    <div id="meet_id">
+      <p>meet id</p>
+    </div>
 
-    <div class="w3-margin-top">
-      <textarea id="textarea_description" class="w3-input w3-border" type="text" placeholder="description"></textarea>
+    <div>
+      <textarea id="textarea_description" class="w3-input w3-border w3-border-green w3-round" type="text"
+        placeholder="description"></textarea>
     </div>
 
     <div>
@@ -19,9 +23,10 @@
       <label>Enable automatic recording</label>
     </div>
 
-    <div class="w3-margin-top w3-margin-bottom w3-bar">
-      <button id="start_recording" class="w3-button w3-round w3-red">Start Recording</button>
-      <button id="stop_recording" class="w3-button w3-round w3-border w3-border-green">Stop Recording</button>
+    <div class="w3-margin-top w3-margin-bottom w3-bar w3-center">
+      <button id="start_recording" class="w3-button w3-round w3-red w3-padding-small">Start Recording</button>
+      <button id="stop_recording" class="w3-button w3-round w3-border w3-border-green w3-padding-small">Stop
+        Recording</button>
     </div>
 
     <script type="text/javascript" src="jquery-3.5.1.min.js"></script>
