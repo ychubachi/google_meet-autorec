@@ -1,6 +1,7 @@
 console.log("popup.js");
 
 var current_url;
+var current_meet_id;
 
 $("#checkbox_autorec").on("change", save_status);
 $("#textarea_description").on("change", save_status);
@@ -9,9 +10,10 @@ $("#stop_recording").on('click', stop_recording);
 
 chrome.tabs.query({ active: true, currentWindow: true }, (e) => {
   current_url = e[0].url;
-  const meet_id = current_url.match("^https://meet.google.com/(.*)$");
-  if (meet_id && meet_id[1].length > 0) {
-    $("#meet_id").text(`Google Meet ID: ${meet_id[1]}`);
+  const meet_id = current_url.match("^https://meet.google.com/([a-z-]+).*$");
+  if (meet_id && meet_id[1]) {
+    current_meet_id = meet_id[1];
+    $("#meet_id").text(`Google Meet ID: ${current_meet_id}`);
   } else {
     $("#title").addClass("w3-gray");
     $("#title").addClass("w3-orange w3-text-white");
@@ -72,10 +74,10 @@ function save_status() {
       result = { autorec: {} };
     }
     if (enabled || description) {
-      result.autorec[current_url] = { description: description, enabled: enabled };
+      result.autorec[current_meet_id] = { description: description, enabled: enabled };
       console.log(result.autorec);
     } else {
-      delete result.autorec[current_url];
+      delete result.autorec[current_meet_id];
     }
 
     chrome.storage.sync.set({ autorec: result.autorec }, function () {
@@ -95,7 +97,7 @@ function load_status() {
       console.log("create autorec property");
       result = { autorec: {} };
     }
-    const data = result.autorec[current_url];
+    const data = result.autorec[current_meet_id];
     if (data) {
       console.log(data.enabled);
       console.log(data.description);

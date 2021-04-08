@@ -239,11 +239,14 @@ function autorec_meeting(url) {
   chrome.storage.sync.get("autorec", function (result) {
     // console.log(result);
     if (result["autorec"]) {
-      const data = result.autorec[url];
-      if (data && data.enabled) {
-        console.log("Start recording");
-        send_command_to_content("start_recording");
-        return;
+      const meet_id = url.match("^https://meet.google.com/([a-z-]+).*$");
+      if (meet_id && meet_id[1]) {
+        const data = result.autorec[meet_id[1]];
+        if (data && data.enabled) {
+          console.log("Start recording");
+          send_command_to_content("start_recording");
+          return;
+        }
       }
     }
     console.log("Do not start recording");
