@@ -1,4 +1,4 @@
-// console.log("background.js loaded");
+console.log("Google Meet Autorec: background.js loaded");
 
 // Request body of CreateMeetingDevice
 var captured_request_body;

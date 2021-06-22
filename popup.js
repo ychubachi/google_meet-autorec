@@ -1,4 +1,4 @@
-console.log("popup.js");
+console.log("Google Meet Autorec: popup.js loaded");
 
 var current_url;
 var current_meet_id;
@@ -65,17 +65,17 @@ function save_status() {
   console.trace();
   const description = $("#textarea_description").val();
   const enabled = $("#checkbox_autorec").prop("checked");
-  console.log("description=" + description);
-  console.log("enabled=" + enabled);
+  // console.log("description=" + description);
+  // console.log("enabled=" + enabled);
 
   chrome.storage.sync.get("autorec", function (result) {
     if (!result["autorec"]) {
-      console.log("create autorec property");
+      // console.log("create autorec property");
       result = { autorec: {} };
     }
     if (enabled || description) {
       result.autorec[current_meet_id] = { description: description, enabled: enabled };
-      console.log(result.autorec);
+      // console.log(result.autorec);
     } else {
       delete result.autorec[current_meet_id];
     }

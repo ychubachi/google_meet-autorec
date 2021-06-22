@@ -1,3 +1,5 @@
+console.log("Google Meet Autorec: content.js loaded");
+
 /**
  * Listen events from both popup.js and background.js
  */
