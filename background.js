@@ -132,6 +132,8 @@ chrome.webRequest.onSendHeaders.addListener(
           function (response) {
             // console.log(response);
             const new_status = response;
+            // console.log("status=" + status);
+            // console.log("new_status=" + new_status);
             if (status == "can_not_record"
               && new_status == "can_record") {
               console.log("Now we can start recording");

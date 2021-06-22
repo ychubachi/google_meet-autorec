@@ -1,6 +1,12 @@
 console.log("Google Meet Autorec: content.js loaded");
 
 /**
+ * We use this magic string to check if we can start recording.
+ * This string may changes in case of UI updates by Google.
+ */
+const record_button_selector = "button[jsname='CQylAd']";
+
+/**
  * Listen events from both popup.js and background.js
  */
 chrome.runtime.onMessage.addListener(
@@ -29,9 +35,10 @@ chrome.runtime.onMessage.addListener(
  * @returns status
  */
 function get_status() {
-  // console.trace();
-  var elems = document.querySelectorAll('div[jsname="CQylAd"]');
-  // console.log(elems);
+  console.trace();
+  console.log(record_button_selector);
+  var elems = document.querySelectorAll(record_button_selector);
+  console.log(elems);
 
   if (elems.length > 0) {
     return "can_record";
