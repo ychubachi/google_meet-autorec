@@ -124,12 +124,18 @@ chrome.webRequest.onSendHeaders.addListener(
         active: true, currentWindow: true
       },
       function (tabs) {
+        if(!tabs) {
+          return; // Error
+        }
         chrome.tabs.sendMessage(
           tabs[0].id,
           {
             command: "status",
           },
           function (response) {
+            if(chrome.runtime.lastError) {
+              return; // Error
+            }
             // console.log(response);
             const new_status = response;
             // console.log("status=" + status);
