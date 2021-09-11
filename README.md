@@ -2,8 +2,8 @@
 
 ![Screenshot](autorec_screenshot.png)
 
-This is a Google Chrome extension to add automatic video recording for Google Meet meetings.
-It keeps its meeting ID which you need to record every time.
+This is a Google Chrome extension to add automatic video recording to Google Meet.
+It keeps its meeting URL which you need to record every time.
 Onece you enable automatic recording, the meeting is automatically recorded when you open the same meeting.
 
 Developed and tested primarily on Chrome 89.

@@ -1,8 +1,8 @@
 {
     "manifest_version": 2,
     "name": "Google Meet AutoRec",
-    "description": "A Google Chrome extension to enable automatic recording for Google Meet",
-    "version": "1.0.3",
+    "description": "Google Chrome extension to add automatic video recording function to Google Meet",
+    "version": "1.2.0",
     "permissions": [
         "tabs",
         "storage",
