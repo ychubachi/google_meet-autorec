@@ -17,17 +17,17 @@
                 "https://meet.google.com/*"
             ],
             "js": [
-                "jquery-3.5.1.min.js",
-                "content.js"
+                "lib/jquery-3.5.1.min.js",
+                "js/content.js"
             ],
             "run_at": "document_start"
         }
     ],
     "background": {
-        "service_worker": "background.js"
+        "service_worker": "js/background.js"
     },
     "action": {
-        "default_popup": "popup.html",
+        "default_popup": "ui/popup.html",
         "default_title": "Google Meet AutoRec"
     },
     "icons": {
