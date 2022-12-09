@@ -245,6 +245,7 @@ function remove_unsafe_headers(headers: any) {
   return new_headers;
 }
 
+/*
 function arrayBufferToBase64(buffer: any) {
   var binary = '';
   var bytes = new Uint8Array(buffer);
@@ -254,6 +255,7 @@ function arrayBufferToBase64(buffer: any) {
   }
   return window.btoa(binary);
 }
+*
 
 /**
  * Start recording if this google meet url is enabled for recording.

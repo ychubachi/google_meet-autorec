@@ -284,7 +284,6 @@ function strToArrayBuffer(mystr: any) { // TODO use?
   return bytes.buffer;
 }
 
-// @ts-expect-error TS(2393): Duplicate function implementation.
 function arrayBufferToBase64(buffer: any) { // TODO use?
   var binary = '';
   var bytes = new Uint8Array(buffer);

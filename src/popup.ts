@@ -8,9 +8,9 @@ $("#checkbox_autorec").on("change", save_status);
 // @ts-expect-error TS(2581): Cannot find name '$'. Do you need to install type ... Remove this comment to see the full error message
 $("#textarea_description").on("change", save_status);
 // @ts-expect-error TS(2581): Cannot find name '$'. Do you need to install type ... Remove this comment to see the full error message
-$("#start_recording").on('click', start_recording);
+$("#start_recording").on('click', ui_start_recording);
 // @ts-expect-error TS(2581): Cannot find name '$'. Do you need to install type ... Remove this comment to see the full error message
-$("#stop_recording").on('click', stop_recording);
+$("#stop_recording").on('click', ui_stop_recording);
 
 // @ts-expect-error TS(2304): Cannot find name 'chrome'.
 chrome.tabs.query({ active: true, currentWindow: true }, (e: any) => {
@@ -41,8 +41,7 @@ chrome.tabs.query({ active: true, currentWindow: true }, (e: any) => {
   load_status();
 });
 
-// @ts-expect-error TS(2393): Duplicate function implementation.
-function start_recording() {
+function ui_start_recording() {
   console.trace();
   // @ts-expect-error TS(2304): Cannot find name 'chrome'.
   chrome.runtime.sendMessage(
@@ -55,8 +54,7 @@ function start_recording() {
   );
 }
 
-// @ts-expect-error TS(2393): Duplicate function implementation.
-function stop_recording() {
+function ui_stop_recording() {
   console.trace();
   // @ts-expect-error TS(2304): Cannot find name 'chrome'.
   chrome.runtime.sendMessage(
