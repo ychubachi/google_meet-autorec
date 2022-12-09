@@ -19,15 +19,15 @@ var status = "can_not_record";
 */
 chrome.webRequest.onBeforeRequest.addListener(
   function (info) {
-    // console.trace();
-    // console.log(info.url);
-    // console.log(info);
+    console.trace();
+    console.log(info.url);
+    console.log(info);
 
     // Capture CreateMeetingDevice request body
     body = info.requestBody.raw[0].bytes;
 
-    // console.log("Request Body in CreateMeetingDevice captured:");
-    // console.log(body);
+    console.log("Request Body in CreateMeetingDevice captured:");
+    console.log(body);
     captured_request_body = arrayBufferToBase64(body);
     // console.log(captured_request_body);
     return true;
@@ -49,7 +49,7 @@ chrome.webRequest.onBeforeRequest.addListener(
 */
 chrome.webRequest.onSendHeaders.addListener(
   function (info) {
-    // console.trace();
+    console.trace();
     // console.log(info.url);
     // console.log(info);
 
@@ -78,9 +78,9 @@ chrome.webRequest.onSendHeaders.addListener(
             var result = atob(response.body).match(/@spaces\/(.*?)\/devices\//);
             if (result) {
               space_id = result[1];
-              // console.log("space_id: " + space_id);
+              console.log("space_id: " + space_id);
             } else {
-              // console.log('no space id on CreateMeeting, uh oh');
+              console.log('no space id on CreateMeeting, uh oh');
             }
           }
         );

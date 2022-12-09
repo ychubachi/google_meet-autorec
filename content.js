@@ -36,13 +36,13 @@ chrome.runtime.onMessage.addListener(
  */
 function get_status() {
   console.trace();
-  console.log(record_button_selector);
-  var elems = document.querySelectorAll(record_button_selector);
-  console.log(elems);
-
+    var elems = document.querySelectorAll(record_button_selector);
+  
   if (elems.length > 0) {
+    console.log("can_record");
     return "can_record";
   } else {
+    console.log("can_not_record");
     return "can_not_record";
   }
 }
@@ -55,7 +55,7 @@ function get_status() {
  * @param {*} sendResponse 
  */
 function create_device(request, sendResponse) {
-  // console.trace()
+  console.trace()
 
   var xrequest = new XMLHttpRequest();
   xrequest.withCredentials = true;
@@ -65,18 +65,20 @@ function create_device(request, sendResponse) {
   request.headers.forEach(header => {
     xrequest.setRequestHeader(header.name, header.value);
   })
+  console.log(request);
+  console.log(request.body);
   var request_body = base64ToArrayBuffer(request.body); // TODO: check
   xrequest.send(request_body);
 
   xrequest.onload = function (e) {
-    // console.log('sending response: ' + this.responseText);
+    console.log('sending response: ' + this.responseText);
     sendResponse({ body: this.responseText });
   };
 }
 
 // Start recording sequence
 function start_recording(request, sendResponse) {
-  // console.trace();
+  console.trace();
   // console.log("Google Meet AutoRec: Start recording");
   create_meeting_recording(request);
   sendResponse("ok");
@@ -114,7 +116,7 @@ function create_meeting_recording(request) {
     mrequest.setRequestHeader(header.name, header.value);
   })
   var payload = create_meeting_recording_payload("spaces/" + request.space_id);
-  // console.log("sending: " + payload);
+  console.log("sending: " + payload);
   mrequest.send(payload);
 
   mrequest.onload = function (e) {
