@@ -18,23 +18,23 @@
             ],
             "js": [
                 "lib/jquery-3.5.1.min.js",
-                "js/content.js"
+                "src/content/content.js"
             ],
             "run_at": "document_start"
         }
     ],
     "background": {
-        "service_worker": "js/background.js"
+        "service_worker": "src/background/background.js"
     },
     "action": {
-        "default_popup": "ui/popup.html",
+        "default_popup": "src/action/popup.html",
         "default_title": "Google Meet AutoRec"
     },
     "icons": {
-        "16": "images/Google_Meet_AutoRec16.png",
-        "32": "images/Google_Meet_AutoRec32.png",
-        "48": "images/Google_Meet_AutoRec48.png",
-        "128": "images/Google_Meet_AutoRec128.png"
+        "16": "icon/Google_Meet_AutoRec16.png",
+        "32": "icon/Google_Meet_AutoRec32.png",
+        "48": "icon/Google_Meet_AutoRec48.png",
+        "128": "icon/Google_Meet_AutoRec128.png"
     },
     "commands": {
         "start_recording": {
