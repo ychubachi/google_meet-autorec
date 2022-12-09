@@ -23,5 +23,8 @@
   "bugs": {
     "url": "https://github.com/ychubachi/google_meet-autorec/issues"
   },
-  "homepage": "https://github.com/ychubachi/google_meet-autorec#readme"
+  "homepage": "https://github.com/ychubachi/google_meet-autorec#readme",
+  "dependencies": {
+    "typescript": "^4.9.4"
+  }
 }
