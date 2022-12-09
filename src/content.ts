@@ -9,7 +9,6 @@ const record_button_selector = "button[jsname='CQylAd']";
 /**
  * Listen events from both popup.js and background.js
  */
-// @ts-expect-error TS(2304): Cannot find name 'chrome'.
 chrome.runtime.onMessage.addListener(
   function (request: any, sender: any, sendResponse: any) {
     // console.trace();

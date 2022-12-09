@@ -17,7 +17,6 @@ var status = "can_not_record";
   Step 1/2. "onBeforeRequest": get magic strings from the request body
             which includes device id and so on.
 */
-// @ts-expect-error TS(2304): Cannot find name 'chrome'.
 chrome.webRequest.onBeforeRequest.addListener(
   function (info: any) {
     console.trace();
@@ -51,7 +50,6 @@ chrome.webRequest.onBeforeRequest.addListener(
   Step 2/2. "onSendHeaders": get device id and space id by simulating
   CreateMeetingDevice request.
 */
-// @ts-expect-error TS(2304): Cannot find name 'chrome'.
 chrome.webRequest.onSendHeaders.addListener(
   function (info: any) {
     console.trace();
@@ -61,7 +59,6 @@ chrome.webRequest.onSendHeaders.addListener(
     // console.log("Sending message to content.js");
 
     // send a message to content.js
-    // @ts-expect-error TS(2304): Cannot find name 'chrome'.
     chrome.tabs.query(
       {
         active: true, currentWindow: true
@@ -69,7 +66,6 @@ chrome.webRequest.onSendHeaders.addListener(
       function (tabs: any) {
         // console.trace();
 
-        // @ts-expect-error TS(2304): Cannot find name 'chrome'.
         chrome.tabs.sendMessage(
           tabs[0].id,
           {
@@ -105,7 +101,6 @@ chrome.webRequest.onSendHeaders.addListener(
 /**
  * watch SyncMeetingSpaceCollections and capture request headers
  */
-// @ts-expect-error TS(2304): Cannot find name 'chrome'.
 chrome.webRequest.onSendHeaders.addListener(
   function (info: any) {
     // console.trace();
@@ -123,12 +118,10 @@ chrome.webRequest.onSendHeaders.addListener(
 /**
  * Check client status
  */
-// @ts-expect-error TS(2304): Cannot find name 'chrome'.
 chrome.webRequest.onSendHeaders.addListener(
   function (info: any) {
     // console.trace();
 
-    // @ts-expect-error TS(2304): Cannot find name 'chrome'.
     chrome.tabs.query(
       {
         active: true, currentWindow: true
@@ -137,14 +130,12 @@ chrome.webRequest.onSendHeaders.addListener(
         if(!tabs) {
           return; // Error
         }
-        // @ts-expect-error TS(2304): Cannot find name 'chrome'.
         chrome.tabs.sendMessage(
           tabs[0].id,
           {
             command: "status",
           },
           function (response: any) {
-            // @ts-expect-error TS(2304): Cannot find name 'chrome'.
             if(chrome.runtime.lastError) {
               return; // Error
             }
@@ -171,7 +162,6 @@ chrome.webRequest.onSendHeaders.addListener(
   ["requestHeaders", "extraHeaders"]
 );
 
-// @ts-expect-error TS(2304): Cannot find name 'chrome'.
 chrome.runtime.onMessage.addListener(
   function (request: any, sender: any, sendResponse: any) {
     // console.trace();
@@ -184,7 +174,6 @@ chrome.runtime.onMessage.addListener(
   }
 );
 
-// @ts-expect-error TS(2304): Cannot find name 'chrome'.
 chrome.commands.onCommand.addListener(
   function (command: any) {
     send_command_to_content(command);
@@ -198,7 +187,6 @@ chrome.commands.onCommand.addListener(
 function send_command_to_content(command: any) {
   // console.trace();
 
-  // @ts-expect-error TS(2304): Cannot find name 'chrome'.
   chrome.tabs.query(
     {
       active: true, currentWindow: true
@@ -206,7 +194,6 @@ function send_command_to_content(command: any) {
     function (tabs: any) {
       // console.log(command);
 
-      // @ts-expect-error TS(2304): Cannot find name 'chrome'.
       chrome.tabs.sendMessage(
         tabs[0].id,
         {
@@ -215,7 +202,6 @@ function send_command_to_content(command: any) {
           space_id: space_id
         },
         function (response: any) {
-          // @ts-expect-error TS(2304): Cannot find name 'chrome'.
           if (chrome.runtime.lastError) {
             // console.log('no response from content, let\'s just assume the best...');
           }
@@ -266,7 +252,6 @@ function arrayBufferToBase64(buffer: any) {
 function autorec_meeting(url: any) {
   // console.trace();
 
-  // @ts-expect-error TS(2304): Cannot find name 'chrome'.
   chrome.storage.sync.get("autorec", function (result: any) {
     // console.log(result);
     if (result["autorec"]) {

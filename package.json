@@ -26,5 +26,8 @@
   "homepage": "https://github.com/ychubachi/google_meet-autorec#readme",
   "dependencies": {
     "typescript": "^4.9.4"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.0.203"
   }
 }

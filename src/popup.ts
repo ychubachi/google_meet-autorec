@@ -12,7 +12,6 @@ $("#start_recording").on('click', ui_start_recording);
 // @ts-expect-error TS(2581): Cannot find name '$'. Do you need to install type ... Remove this comment to see the full error message
 $("#stop_recording").on('click', ui_stop_recording);
 
-// @ts-expect-error TS(2304): Cannot find name 'chrome'.
 chrome.tabs.query({ active: true, currentWindow: true }, (e: any) => {
   current_url = e[0].url;
   const meet_id = current_url.match("^https://meet.google.com/([a-z-]+).*$");
@@ -43,7 +42,6 @@ chrome.tabs.query({ active: true, currentWindow: true }, (e: any) => {
 
 function ui_start_recording() {
   console.trace();
-  // @ts-expect-error TS(2304): Cannot find name 'chrome'.
   chrome.runtime.sendMessage(
     {
       command: "start_recording"
@@ -56,7 +54,6 @@ function ui_start_recording() {
 
 function ui_stop_recording() {
   console.trace();
-  // @ts-expect-error TS(2304): Cannot find name 'chrome'.
   chrome.runtime.sendMessage(
     {
       command: "stop_recording"
@@ -86,7 +83,6 @@ function save_status() {
   // console.log("description=" + description);
   // console.log("enabled=" + enabled);
 
-  // @ts-expect-error TS(2304): Cannot find name 'chrome'.
   chrome.storage.sync.get("autorec", function (result: any) {
     if (!result["autorec"]) {
       // console.log("create autorec property");
@@ -99,9 +95,7 @@ function save_status() {
       delete result.autorec[current_meet_id];
     }
 
-    // @ts-expect-error TS(2304): Cannot find name 'chrome'.
     chrome.storage.sync.set({ autorec: result.autorec }, function () {
-      // @ts-expect-error TS(2304): Cannot find name 'chrome'.
       chrome.storage.sync.get(null, function (result: any) {
         console.log("new data:");
         console.log(result);
@@ -113,7 +107,6 @@ function save_status() {
 function load_status() {
   console.trace();
 
-  // @ts-expect-error TS(2304): Cannot find name 'chrome'.
   chrome.storage.sync.get("autorec", function (result: any) {
     if (!result["autorec"]) {
       console.log("create autorec property");

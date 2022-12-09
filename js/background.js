@@ -16,7 +16,6 @@ var status = "can_not_record";
   Step 1/2. "onBeforeRequest": get magic strings from the request body
             which includes device id and so on.
 */
-// @ts-expect-error TS(2304): Cannot find name 'chrome'.
 chrome.webRequest.onBeforeRequest.addListener(function (info) {
     console.trace();
     console.log(info.url);
@@ -43,19 +42,16 @@ chrome.webRequest.onBeforeRequest.addListener(function (info) {
   Step 2/2. "onSendHeaders": get device id and space id by simulating
   CreateMeetingDevice request.
 */
-// @ts-expect-error TS(2304): Cannot find name 'chrome'.
 chrome.webRequest.onSendHeaders.addListener(function (info) {
     console.trace();
     // console.log(info.url);
     // console.log(info);
     // console.log("Sending message to content.js");
     // send a message to content.js
-    // @ts-expect-error TS(2304): Cannot find name 'chrome'.
     chrome.tabs.query({
         active: true, currentWindow: true
     }, function (tabs) {
         // console.trace();
-        // @ts-expect-error TS(2304): Cannot find name 'chrome'.
         chrome.tabs.sendMessage(tabs[0].id, {
             command: 'createDevice',
             url: info.url,
@@ -82,7 +78,6 @@ chrome.webRequest.onSendHeaders.addListener(function (info) {
 /**
  * watch SyncMeetingSpaceCollections and capture request headers
  */
-// @ts-expect-error TS(2304): Cannot find name 'chrome'.
 chrome.webRequest.onSendHeaders.addListener(function (info) {
     // console.trace();
     captured_request_headers = info.requestHeaders;
@@ -94,21 +89,17 @@ chrome.webRequest.onSendHeaders.addListener(function (info) {
 /**
  * Check client status
  */
-// @ts-expect-error TS(2304): Cannot find name 'chrome'.
 chrome.webRequest.onSendHeaders.addListener(function (info) {
     // console.trace();
-    // @ts-expect-error TS(2304): Cannot find name 'chrome'.
     chrome.tabs.query({
         active: true, currentWindow: true
     }, function (tabs) {
         if (!tabs) {
             return; // Error
         }
-        // @ts-expect-error TS(2304): Cannot find name 'chrome'.
         chrome.tabs.sendMessage(tabs[0].id, {
             command: "status",
         }, function (response) {
-            // @ts-expect-error TS(2304): Cannot find name 'chrome'.
             if (chrome.runtime.lastError) {
                 return; // Error
             }
@@ -129,7 +120,6 @@ chrome.webRequest.onSendHeaders.addListener(function (info) {
         "https://meet.google.com/$rpc/google.rtc.meetings.v1.MeetingSpaceService/SyncMeetingSpaceCollections"
     ]
 }, ["requestHeaders", "extraHeaders"]);
-// @ts-expect-error TS(2304): Cannot find name 'chrome'.
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     // console.trace();
     // console.trace(request);
@@ -137,7 +127,6 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     sendResponse('done');
     return true;
 });
-// @ts-expect-error TS(2304): Cannot find name 'chrome'.
 chrome.commands.onCommand.addListener(function (command) {
     send_command_to_content(command);
 });
@@ -147,18 +136,15 @@ chrome.commands.onCommand.addListener(function (command) {
  */
 function send_command_to_content(command) {
     // console.trace();
-    // @ts-expect-error TS(2304): Cannot find name 'chrome'.
     chrome.tabs.query({
         active: true, currentWindow: true
     }, function (tabs) {
         // console.log(command);
-        // @ts-expect-error TS(2304): Cannot find name 'chrome'.
         chrome.tabs.sendMessage(tabs[0].id, {
             command: command,
             headers: remove_unsafe_headers(captured_request_headers),
             space_id: space_id
         }, function (response) {
-            // @ts-expect-error TS(2304): Cannot find name 'chrome'.
             if (chrome.runtime.lastError) {
                 // console.log('no response from content, let\'s just assume the best...');
             }
@@ -204,7 +190,6 @@ function arrayBufferToBase64(buffer: any) {
  */
 function autorec_meeting(url) {
     // console.trace();
-    // @ts-expect-error TS(2304): Cannot find name 'chrome'.
     chrome.storage.sync.get("autorec", function (result) {
         // console.log(result);
         if (result["autorec"]) {
