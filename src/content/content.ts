@@ -9,8 +9,9 @@ const record_button_selector = "button[jsname='CQylAd']";
 /**
  * Listen events from both popup.js and background.js
  */
+// @ts-expect-error TS(2304): Cannot find name 'chrome'.
 chrome.runtime.onMessage.addListener(
-  function (request, sender, sendResponse) {
+  function (request: any, sender: any, sendResponse: any) {
     // console.trace();
     // console.log(request);
 
@@ -54,7 +55,7 @@ function get_status() {
  * @param {*} request 
  * @param {*} sendResponse 
  */
-function create_device(request, sendResponse) {
+function create_device(request: any, sendResponse: any) {
   console.trace()
 
   var xrequest = new XMLHttpRequest();
@@ -62,7 +63,7 @@ function create_device(request, sendResponse) {
 
   xrequest.open("POST", request.url + '?', true); // append ? to avoid our webRequests TODO: check
 
-  request.headers.forEach(header => {
+  request.headers.forEach((header: any) => {
     xrequest.setRequestHeader(header.name, header.value);
   })
   console.log(request);
@@ -77,7 +78,7 @@ function create_device(request, sendResponse) {
 }
 
 // Start recording sequence
-function start_recording(request, sendResponse) {
+function start_recording(request: any, sendResponse: any) {
   console.trace();
   // console.log("Google Meet AutoRec: Start recording");
   create_meeting_recording(request);
@@ -85,21 +86,21 @@ function start_recording(request, sendResponse) {
 }
 
 // Stop recording
-function stop_recording(request, sendResponse) {
+function stop_recording(request: any, sendResponse: any) {
   // console.trace();
   // console.log("Google Meet AutoRec: Stop recording");
   update_meeting_recording(request, "stop")
   sendResponse("ok");
 }
 
-var recording_id;
+var recording_id: any;
 
 /**
  * Send CreateMeetingRecording to get recording id.
  * 
  * @param {*} request 
  */
-function create_meeting_recording(request) {
+function create_meeting_recording(request: any) {
   // console.trace();
   // console.log("Step 1/3: Send CreateMeetingRecording");
 
@@ -112,7 +113,7 @@ function create_meeting_recording(request) {
     true
   );
 
-  request.headers.forEach(header => {
+  request.headers.forEach((header: any) => {
     mrequest.setRequestHeader(header.name, header.value);
   })
   var payload = create_meeting_recording_payload("spaces/" + request.space_id);
@@ -127,6 +128,7 @@ function create_meeting_recording(request) {
     var response_str = window.atob(this.responseText)
     // console.log(response_str);
 
+    // @ts-expect-error TS(2531): Object is possibly 'null'.
     recording_id = response_str.match("Cspaces/.*/recordings/[a-f,0-9,-]*")[0];
     // console.log("recording_id=" + recording_id);
 
@@ -143,7 +145,7 @@ bynary:
   9 to 20: 2UJQ1T4tt_sB
   21: 18 22: 2 23: 104 24: 1
 */
-function create_meeting_recording_payload(str) {
+function create_meeting_recording_payload(str: any) {
   var bytes = new Uint8Array(25);
   bytes[0] = 10;
   bytes[1] = 19;
@@ -161,7 +163,7 @@ function create_meeting_recording_payload(str) {
  * Step 2/3: Send listMeetingRecordingAcks
  * @param {*} request 
  */
-function list_meeting_recording_acks(request) {
+function list_meeting_recording_acks(request: any) {
   // console.log("Step 2/3: Send listMeetingRecordingAcks");
   var mrequest = new XMLHttpRequest();
 
@@ -172,7 +174,7 @@ function list_meeting_recording_acks(request) {
     true
   );
 
-  request.headers.forEach(header => {
+  request.headers.forEach((header: any) => {
     mrequest.setRequestHeader(header.name, header.value);
   })
   var payload = list_meeting_recording_acks_payload();
@@ -208,7 +210,7 @@ function list_meeting_recording_acks_payload() {
  * @param {*} request 
  * @param {*} command 
  */
-function update_meeting_recording(request, command) {
+function update_meeting_recording(request: any, command: any) {
   // console.log("Step 3/3: Send updateMeetingRecording");
   var mrequest = new XMLHttpRequest();
 
@@ -219,7 +221,7 @@ function update_meeting_recording(request, command) {
     true
   );
 
-  request.headers.forEach(header => {
+  request.headers.forEach((header: any) => {
     mrequest.setRequestHeader(header.name, header.value);
   })
   var payload = update_meeting_recording_payload(command);
@@ -244,7 +246,7 @@ function update_meeting_recording(request, command) {
 73: 104
 74: 1
 */
-function update_meeting_recording_payload(command) {
+function update_meeting_recording_payload(command: any) {
   var bytes = new Uint8Array(75);
   bytes[0] = 10;
   bytes[1] = 73;
@@ -263,7 +265,7 @@ function update_meeting_recording_payload(command) {
   return bytes;
 }
 
-function base64ToArrayBuffer(base64) { // TODO use?
+function base64ToArrayBuffer(base64: any) { // TODO use?
   var binary_string = window.atob(base64);
   var len = binary_string.length;
   var bytes = new Uint8Array(len);
@@ -273,7 +275,7 @@ function base64ToArrayBuffer(base64) { // TODO use?
   return bytes.buffer;
 }
 
-function strToArrayBuffer(mystr) { // TODO use?
+function strToArrayBuffer(mystr: any) { // TODO use?
   var len = mystr.length;
   var bytes = new Uint8Array(len);
   for (var i = 0; i < len; i++) {
@@ -282,7 +284,8 @@ function strToArrayBuffer(mystr) { // TODO use?
   return bytes.buffer;
 }
 
-function arrayBufferToBase64(buffer) { // TODO use?
+// @ts-expect-error TS(2393): Duplicate function implementation.
+function arrayBufferToBase64(buffer: any) { // TODO use?
   var binary = '';
   var bytes = new Uint8Array(buffer);
   var len = bytes.byteLength;

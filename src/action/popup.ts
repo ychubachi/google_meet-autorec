@@ -1,51 +1,69 @@
 console.log("Google Meet Autorec: popup.js loaded");
 
 var current_url;
-var current_meet_id;
+var current_meet_id: any;
 
+// @ts-expect-error TS(2581): Cannot find name '$'. Do you need to install type ... Remove this comment to see the full error message
 $("#checkbox_autorec").on("change", save_status);
+// @ts-expect-error TS(2581): Cannot find name '$'. Do you need to install type ... Remove this comment to see the full error message
 $("#textarea_description").on("change", save_status);
+// @ts-expect-error TS(2581): Cannot find name '$'. Do you need to install type ... Remove this comment to see the full error message
 $("#start_recording").on('click', start_recording);
+// @ts-expect-error TS(2581): Cannot find name '$'. Do you need to install type ... Remove this comment to see the full error message
 $("#stop_recording").on('click', stop_recording);
 
-chrome.tabs.query({ active: true, currentWindow: true }, (e) => {
+// @ts-expect-error TS(2304): Cannot find name 'chrome'.
+chrome.tabs.query({ active: true, currentWindow: true }, (e: any) => {
   current_url = e[0].url;
   const meet_id = current_url.match("^https://meet.google.com/([a-z-]+).*$");
   if (meet_id && meet_id[1]) {
     current_meet_id = meet_id[1];
+    // @ts-expect-error TS(2581): Cannot find name '$'. Do you need to install type ... Remove this comment to see the full error message
     $("#meet_id").text(`Google Meet ID: ${current_meet_id}`);
   } else {
+    // @ts-expect-error TS(2581): Cannot find name '$'. Do you need to install type ... Remove this comment to see the full error message
     $("#title").addClass("w3-gray");
+    // @ts-expect-error TS(2581): Cannot find name '$'. Do you need to install type ... Remove this comment to see the full error message
     $("#title").addClass("w3-orange w3-text-white");
+    // @ts-expect-error TS(2581): Cannot find name '$'. Do you need to install type ... Remove this comment to see the full error message
     $("#main").addClass("w3-text-gray");
+    // @ts-expect-error TS(2581): Cannot find name '$'. Do you need to install type ... Remove this comment to see the full error message
     $("#meet_id").text("This is not Google Meet meeting");
+    // @ts-expect-error TS(2581): Cannot find name '$'. Do you need to install type ... Remove this comment to see the full error message
     $("#textarea_description").prop("disabled", true);
+    // @ts-expect-error TS(2581): Cannot find name '$'. Do you need to install type ... Remove this comment to see the full error message
     $("#checkbox_autorec").prop("disabled", true);
+    // @ts-expect-error TS(2581): Cannot find name '$'. Do you need to install type ... Remove this comment to see the full error message
     $("#start_recording").prop("disabled", true);
+    // @ts-expect-error TS(2581): Cannot find name '$'. Do you need to install type ... Remove this comment to see the full error message
     $("#stop_recording").prop("disabled", true);
   }
   load_status();
 });
 
+// @ts-expect-error TS(2393): Duplicate function implementation.
 function start_recording() {
   console.trace();
+  // @ts-expect-error TS(2304): Cannot find name 'chrome'.
   chrome.runtime.sendMessage(
     {
       command: "start_recording"
     },
-    function (response) {
+    function (response: any) {
       console.log(response);
     }
   );
 }
 
+// @ts-expect-error TS(2393): Duplicate function implementation.
 function stop_recording() {
   console.trace();
+  // @ts-expect-error TS(2304): Cannot find name 'chrome'.
   chrome.runtime.sendMessage(
     {
       command: "stop_recording"
     },
-    function (response) {
+    function (response: any) {
       console.log(response);
     }
   );
@@ -63,12 +81,15 @@ chrome.storage.sync.clear();
 
 function save_status() {
   console.trace();
+  // @ts-expect-error TS(2581): Cannot find name '$'. Do you need to install type ... Remove this comment to see the full error message
   const description = $("#textarea_description").val();
+  // @ts-expect-error TS(2581): Cannot find name '$'. Do you need to install type ... Remove this comment to see the full error message
   const enabled = $("#checkbox_autorec").prop("checked");
   // console.log("description=" + description);
   // console.log("enabled=" + enabled);
 
-  chrome.storage.sync.get("autorec", function (result) {
+  // @ts-expect-error TS(2304): Cannot find name 'chrome'.
+  chrome.storage.sync.get("autorec", function (result: any) {
     if (!result["autorec"]) {
       // console.log("create autorec property");
       result = { autorec: {} };
@@ -80,8 +101,10 @@ function save_status() {
       delete result.autorec[current_meet_id];
     }
 
+    // @ts-expect-error TS(2304): Cannot find name 'chrome'.
     chrome.storage.sync.set({ autorec: result.autorec }, function () {
-      chrome.storage.sync.get(null, function (result) {
+      // @ts-expect-error TS(2304): Cannot find name 'chrome'.
+      chrome.storage.sync.get(null, function (result: any) {
         console.log("new data:");
         console.log(result);
       });
@@ -92,7 +115,8 @@ function save_status() {
 function load_status() {
   console.trace();
 
-  chrome.storage.sync.get("autorec", function (result) {
+  // @ts-expect-error TS(2304): Cannot find name 'chrome'.
+  chrome.storage.sync.get("autorec", function (result: any) {
     if (!result["autorec"]) {
       console.log("create autorec property");
       result = { autorec: {} };
@@ -101,7 +125,9 @@ function load_status() {
     if (data) {
       console.log(data.enabled);
       console.log(data.description);
+      // @ts-expect-error TS(2581): Cannot find name '$'. Do you need to install type ... Remove this comment to see the full error message
       $("#checkbox_autorec").prop("checked", data.enabled);
+      // @ts-expect-error TS(2581): Cannot find name '$'. Do you need to install type ... Remove this comment to see the full error message
       $("#textarea_description").val(data.description);
     }
   });
