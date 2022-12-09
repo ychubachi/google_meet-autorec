@@ -213,7 +213,10 @@ function send_command_to_content(command) {
 var unsafe_headers = [
   "Cookie", "User-Agent", "Origin", "Sec-Fetch-Site",
   "Sec-Fetch-Mode", "Sec-Fetch-Dest", "Referer",
-  "Accept-Encoding", "sec-ch-ua", "sec-ch-ua-mobile"];
+  "Accept-Encoding", "sec-ch-ua", "sec-ch-ua-mobile",
+  "DNT", "sec-ch-ua-arch", "sec-ch-ua-platform-version", "sec-ch-ua-full-version-list",
+  "sec-ch-ua-bitness", "sec-ch-ua-model", "sec-ch-ua-wow64", "sec-ch-ua-platform",
+  "sec-ch-ua-full-version"];
 
 function remove_unsafe_headers(headers) {
   var new_headers = Array();
