@@ -10,10 +10,8 @@ const record_button_selector = "button[jsname='CQylAd']";
  * Listen events from both popup.js and background.js
  */
 chrome.runtime.onMessage.addListener(
-  function (request: any, sender: any, sendResponse: any) {
-    // console.trace();
-    // console.log(request);
-
+  (request: any, sender: any, sendResponse: any) => {
+    console.trace("Handle onMessage: request.command=" + request.command);
     if (request.command == 'createDevice') {
       create_device(request, sendResponse);
     } else if (request.command == 'start_recording') {
@@ -78,16 +76,14 @@ function create_device(request: any, sendResponse: any) {
 
 // Start recording sequence
 function start_recording(request: any, sendResponse: any) {
-  console.trace();
-  // console.log("Google Meet AutoRec: Start recording");
+  console.info("Google Meet AutoRec: Start recording");
   create_meeting_recording(request);
   sendResponse("ok");
 }
 
 // Stop recording
 function stop_recording(request: any, sendResponse: any) {
-  // console.trace();
-  // console.log("Google Meet AutoRec: Stop recording");
+  console.info("Google Meet AutoRec: Stop recording");
   update_meeting_recording(request, "stop")
   sendResponse("ok");
 }
@@ -100,31 +96,29 @@ var recording_id: any;
  * @param {*} request 
  */
 function create_meeting_recording(request: any) {
-  // console.trace();
-  // console.log("Step 1/3: Send CreateMeetingRecording");
-
+  console.info("Step 1/3: Send CreateMeetingRecording");
+  console.trace();
+  
   var mrequest = new XMLHttpRequest();
-
   mrequest.withCredentials = true;
   mrequest.open(
     "POST",
     'https://meet.google.com/$rpc/google.rtc.meetings.v1.MeetingRecordingService/CreateMeetingRecording?', // append ? to avoid our webRequests
     true
   );
-
   request.headers.forEach((header: any) => {
     mrequest.setRequestHeader(header.name, header.value);
   })
+
   var payload = create_meeting_recording_payload("spaces/" + request.space_id);
   console.log("sending: " + payload);
   mrequest.send(payload);
 
   mrequest.onload = function (e) {
-    // console.trace();
-
-    // console.log('start recording response in base64: ' + this.responseText); // this = XMLHttpRequest
+    console.trace();
+    console.log('start recording response in base64: ' + this.responseText); // this = XMLHttpRequest
     // - response text contains "The conference is gone" on error
-    var response_str = window.atob(this.responseText)
+    var response_str = atob(this.responseText)
     // console.log(response_str);
 
     // @ts-expect-error TS(2531): Object is possibly 'null'.
@@ -163,7 +157,7 @@ function create_meeting_recording_payload(str: any) {
  * @param {*} request 
  */
 function list_meeting_recording_acks(request: any) {
-  // console.log("Step 2/3: Send listMeetingRecordingAcks");
+  console.info("Step 2/3: Send listMeetingRecordingAcks");
   var mrequest = new XMLHttpRequest();
 
   mrequest.withCredentials = true;
@@ -183,7 +177,7 @@ function list_meeting_recording_acks(request: any) {
   mrequest.onload = function (e) {
     // console.log('list_meeting_recording_acks response in base64: ');
     // console.log(this.responseText); // TODO this?
-    var response_str = window.atob(this.responseText)
+    var response_str = atob(this.responseText)
     // console.log(response_str);
 
     update_meeting_recording(request, "start");
@@ -210,7 +204,7 @@ function list_meeting_recording_acks_payload() {
  * @param {*} command 
  */
 function update_meeting_recording(request: any, command: any) {
-  // console.log("Step 3/3: Send updateMeetingRecording");
+  console.log("Step 3/3: Send updateMeetingRecording");
   var mrequest = new XMLHttpRequest();
 
   mrequest.withCredentials = true;
@@ -230,7 +224,7 @@ function update_meeting_recording(request: any, command: any) {
   mrequest.onload = function (e) {
     // console.log('update_meeting_recording response in base64: ');
     // console.log(this.responseText);
-    var response_str = window.atob(this.responseText)
+    var response_str = atob(this.responseText)
     // console.log(response_str);
   };
 }
@@ -265,7 +259,7 @@ function update_meeting_recording_payload(command: any) {
 }
 
 function base64ToArrayBuffer(base64: any) { // TODO use?
-  var binary_string = window.atob(base64);
+  var binary_string = atob(base64);
   var len = binary_string.length;
   var bytes = new Uint8Array(len);
   for (var i = 0; i < len; i++) {
@@ -283,6 +277,7 @@ function strToArrayBuffer(mystr: any) { // TODO use?
   return bytes.buffer;
 }
 
+/*
 function arrayBufferToBase64(buffer: any) { // TODO use?
   var binary = '';
   var bytes = new Uint8Array(buffer);
@@ -292,3 +287,4 @@ function arrayBufferToBase64(buffer: any) { // TODO use?
   }
   return window.btoa(binary);
 }
+*/

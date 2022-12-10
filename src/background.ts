@@ -19,17 +19,15 @@ var status = "can_not_record";
 */
 chrome.webRequest.onBeforeRequest.addListener(
   function (details: any) {
-    console.trace("Handle onBeforeRequest :CreateMeetingDevice");
-    console.log(details.url);
-    console.log(details);
-
+    console.trace("Handle onBeforeRequest (CreateMeetingDevice)");
+    console.log("details.url=" + details.url);
+    console.log("details.requestBody=" + details.requestBody);
+    
     // Capture CreateMeetingDevice request body
     var body = details.requestBody.raw[0].bytes;
-
+    console.log("body=" + body);
     console.log("Request Body in CreateMeetingDevice captured:");
-        console.log(body);
-        captured_request_body = arrayBufferToBase64(body);
-    // console.log(captured_request_body);
+    captured_request_body = body;
   },
   {
     urls: [
@@ -48,7 +46,7 @@ chrome.webRequest.onBeforeRequest.addListener(
 */
 chrome.webRequest.onSendHeaders.addListener(
   function (info: any) {
-    console.trace();
+    console.trace("Handle onSendHeaders (CreateMeetingDevice)");
     // console.log(info.url);
     // console.log(info);
 
@@ -60,7 +58,7 @@ chrome.webRequest.onSendHeaders.addListener(
         active: true, currentWindow: true
       },
       function (tabs: any) {
-        // console.trace();
+        console.trace("sendMessage");
 
         chrome.tabs.sendMessage(
           tabs[0].id,
@@ -68,10 +66,10 @@ chrome.webRequest.onSendHeaders.addListener(
             command: 'createDevice',
             url: info.url,
             headers: remove_unsafe_headers(info.requestHeaders),
-            body: captured_request_body
+            body: bg_arrayBufferToBase64(captured_request_body)
           },
           function (response: any) {
-            // console.trace();
+            console.trace("response=" + response);
 
             // get space_id
             var result = atob(response.body).match(/@spaces\/(.*?)\/devices\//);
@@ -227,17 +225,16 @@ function remove_unsafe_headers(headers: any) {
   return new_headers;
 }
 
-/*
-function arrayBufferToBase64(buffer: any) {
+// We have same method in contest.ts
+function bg_arrayBufferToBase64(buffer: any) {
   var binary = '';
   var bytes = new Uint8Array(buffer);
   var len = bytes.byteLength;
   for (var i = 0; i < len; i++) {
     binary += String.fromCharCode(bytes[i]);
   }
-  return window.btoa(binary);
+  return btoa(binary);
 }
-*
 
 /**
  * Start recording if this google meet url is enabled for recording.
