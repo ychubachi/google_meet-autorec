@@ -19,7 +19,7 @@ var status = "can_not_record";
 */
 chrome.webRequest.onBeforeRequest.addListener(
   function (details: any) {
-    console.trace("Handle CreateMeetingDevice");
+    console.trace("Handle onBeforeRequest :CreateMeetingDevice");
     console.log(details.url);
     console.log(details);
 
