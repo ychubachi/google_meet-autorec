@@ -18,22 +18,18 @@ var status = "can_not_record";
             which includes device id and so on.
 */
 chrome.webRequest.onBeforeRequest.addListener(
-  function (info: any) {
-    console.trace();
-    console.log(info.url);
-    console.log(info);
+  function (details: any) {
+    console.trace("Handle CreateMeetingDevice");
+    console.log(details.url);
+    console.log(details);
 
     // Capture CreateMeetingDevice request body
-    // @ts-expect-error TS(2304): Cannot find name 'body'.
-    body = info.requestBody.raw[0].bytes;
+    var body = details.requestBody.raw[0].bytes;
 
     console.log("Request Body in CreateMeetingDevice captured:");
-    // @ts-expect-error TS(2304): Cannot find name 'body'.
-    console.log(body);
-    // @ts-expect-error TS(2304): Cannot find name 'body'.
-    captured_request_body = arrayBufferToBase64(body);
+        console.log(body);
+        captured_request_body = arrayBufferToBase64(body);
     // console.log(captured_request_body);
-    return true;
   },
   {
     urls: [
