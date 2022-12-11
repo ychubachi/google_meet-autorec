@@ -19,10 +19,9 @@ var status = "can_not_record";
 */
 chrome.webRequest.onBeforeRequest.addListener(
   function (details: any) {
-    console.trace("Handle onBeforeRequest (CreateMeetingDevice)");
-    console.log("details.url=" + details.url);
-    console.log("details.requestBody=" + details.requestBody);
-    
+    console.info("Geegle Meet is sending CreateMeetingDevice request.")
+    console.log("details=" + JSON.stringify(details))
+            
     // Capture CreateMeetingDevice request body
     var body = details.requestBody.raw[0].bytes;
     console.log("body=" + body);
@@ -45,14 +44,11 @@ chrome.webRequest.onBeforeRequest.addListener(
   CreateMeetingDevice request.
 */
 chrome.webRequest.onSendHeaders.addListener(
-  function (info: any) {
-    console.trace("Handle onSendHeaders (CreateMeetingDevice)");
-    // console.log(info.url);
-    // console.log(info);
+  function (details: any) {
+    console.trace("Handle onSendHeaders (CreateMeetingDevice)")
+    console.log("details=" + JSON.stringify(details))
 
     // console.log("Sending message to content.js");
-
-    // send a message to content.js
     chrome.tabs.query(
       {
         active: true, currentWindow: true
@@ -64,8 +60,8 @@ chrome.webRequest.onSendHeaders.addListener(
           tabs[0].id,
           {
             command: 'createDevice',
-            url: info.url,
-            headers: remove_unsafe_headers(info.requestHeaders),
+            url: details.url,
+            headers: remove_unsafe_headers(details.requestHeaders),
             body: bg_arrayBufferToBase64(captured_request_body)
           },
           function (response: any) {

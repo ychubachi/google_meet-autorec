@@ -76,7 +76,8 @@ function create_device(request: any, sendResponse: any) {
 
 // Start recording sequence
 function start_recording(request: any, sendResponse: any) {
-  console.info("Google Meet AutoRec: Start recording");
+  console.info("Google Meet AutoRec: Start recording")
+  console.log(JSON.stringify(request))
   create_meeting_recording(request);
   sendResponse("ok");
 }
