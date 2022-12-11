@@ -105,3 +105,4 @@ dist
 workspace.code-workspace
 
 js/
+tmp/

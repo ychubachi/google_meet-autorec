@@ -73,9 +73,11 @@ chrome.webRequest.onSendHeaders.addListener(
 
             // get space_id
             var result = atob(response.body).match(/@spaces\/(.*?)\/devices\//);
+
+            console.trace("atob(response.body)=" + atob(response.body));
             if (result) {
               space_id = result[1];
-              console.log("space_id: " + space_id);
+              console.info("space_id: " + space_id);
             } else {
               console.log('no space id on CreateMeeting, uh oh');
             }
