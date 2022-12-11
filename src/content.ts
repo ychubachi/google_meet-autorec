@@ -78,9 +78,39 @@ function create_device(request: any, sendResponse: any) {
 function start_recording(request: any, sendResponse: any) {
   console.info("Google Meet AutoRec: Start recording")
   console.log(JSON.stringify(request))
-  create_meeting_recording(request);
-  sendResponse("ok");
+  // create_meeting_recording(request);
+  updateMeetingSpace(request)
+  sendResponse("ok")
 }
+
+function updateMeetingSpace(request: any) {
+  console.log("Call UpdateMeetingSpace")
+  var mrequest = new XMLHttpRequest()
+  mrequest.withCredentials = true
+  mrequest.open(
+    "POST",
+    "https://meet.google.com/$rpc/google.rtc.meetings.v1.MeetingSpaceService/UpdateMeetingSpace",
+    true
+  )
+  request.headers.forEach((header: any) => {
+    mrequest.setRequestHeader(header.name, header.value);
+  })
+
+  var payload = createPayloadForUpdateMeetingSpace(request.space_id);
+  console.log("sending: " + payload);
+  mrequest.send(payload);
+ 
+}
+
+// Make create_meeting_recording payloads
+
+// "body": "\n\u001e\n\u0013spaces/0BnV4Qe6Zs8B2\u0007¢\u0001\u0004\u0012\u0002\b\u0001\u0012\"\n call_info.recording_session_info\u001a\faxhoutuc6b0l",
+function createPayloadForUpdateMeetingSpace(str: any) {
+  // return "\n\u001e\n\u0013spaces/" + str + "\u0007¢\u0001\u0004\u0012\u0002\b\u0001\u0012\"\n call_info.recording_session_info\u001a\faxhoutuc6b0l";
+  // return "\n\u001e\n\u0013spaces/t9wASrIuYlcB2\u0007¢\u0001\u0004\u0012\u0002\b\u0001\u0012\"\n call_info.recording_session_info\u001a\fh9u88lz5uszj"
+  return "\n\u001e\n\u0013spaces/t9wASrIuYlcB2\u0007¢\u0001\u0004\u0012\u0002\b\u0001\u0012\"\n call_info.recording_session_info\u001a\fsvvyx6iuzvza"
+}
+
 
 // Stop recording
 function stop_recording(request: any, sendResponse: any) {
